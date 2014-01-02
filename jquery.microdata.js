@@ -43,7 +43,7 @@
 					return node.getAttribute('datetime').trim();
 				}
 
-				break;
+				return node.textContent.trim();
 
 			case 'AUDIO':
 			case 'EMBED':
