@@ -1,4 +1,4 @@
-$(function()
+$(function() {
 	// TODO: extend serialize methods of parent types
 
 	/* Thing */
