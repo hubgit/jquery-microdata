@@ -6,33 +6,40 @@
 <script src="test.js"></script>
 <style>
 	table { border-collapse: collapse; border: 1px solid #777; margin: 5px 0; }
-	th { text-align: right; }
+	th { text-align: left; }
 	th, td { vertical-align: top; padding: 2px 5px; }
 </style>
 
 <ol id="albumlist">
 	<li itemscope itemtype="http://schema.org/MusicAlbum">
-		<a itemprop="byArtist" itemscope itemtype="http://schema.org/MusicGroup" href="spotify:search:artist:Jesu">
-			<span itemprop="name">Jesu</span>
-		</a>
+		<span itemprop="byArtist" itemscope itemtype="http://schema.org/MusicGroup">
+			<a itemprop="url" href="spotify:search:artist:Jesu">
+				<span itemprop="name">Jesu</span>
+			</a>
+		</span>
 		-
 		<a itemprop="url" href="spotify:search:artist:Jesu+album:Everyday+I+Get+Closer+To+The+Light">
 			<span itemprop="name">Everyday I Get Closer To The Light</span>
 		</a>
 	</li>
 	<li itemscope itemtype="http://schema.org/MusicAlbum">
-		<a itemprop="byArtist" itemscope itemtype="http://schema.org/MusicGroup" href="spotify:search:artist:Deafheaven">
-			<span itemprop="name">Deafheaven</span>
-		</a>
+		<span itemprop="byArtist" itemscope itemtype="http://schema.org/MusicGroup">
+			<a itemprop="url" href="spotify:search:artist:Deafheaven">
+				<span itemprop="name">Deafheaven</span>
+			</a>
+		</span>
 		-
 		<a itemprop="url" href="spotify:search:artist:Deafheaven+album:Sunbather">
 			<span itemprop="name">Sunbather</span>
 		</a>
 	</li>
 	<li itemscope itemtype="http://schema.org/MusicAlbum">
-		<a itemprop="byArtist" itemscope itemtype="http://schema.org/MusicGroup" itemref="tomahawk-members tomahawk-albums" href="spotify:search:artist:Tomahawk">
-			<span itemprop="name">Tomahawk</span>
-		</a>
+		<span itemprop="byArtist" itemscope itemtype="http://schema.org/MusicGroup"
+			  itemref="tomahawk-members tomahawk-albums">
+			<a itemprop="url" href="spotify:search:artist:Tomahawk">
+				<span itemprop="name">Tomahawk</span>
+			</a>
+		</span>
 		-
 		<a itemprop="url" href="spotify:search:artist:Tomahawk+album:Oddfellows">
 			<span itemprop="name">Oddfellows</span>
