@@ -1,5 +1,7 @@
 /* display using Microdata DOM API */
 
+"use strict";
+
 $(function() {
 	var table = $('<table/>').appendTo('body');
 	var thead = $('<thead/>').appendTo(table);
@@ -46,6 +48,6 @@ $(function() {
 		return (new MusicAlbum(node)).serialize();
 	});
 
-	var code = $('<code/>', { text: JSON.stringify(albums.toArray(), null, '  ') });
+	var code = $('<code/>', { text: JSON.stringify(albums.toArray(), null, 2) });
 	$('<pre/>').append(code).appendTo('body');
 })

@@ -2,13 +2,20 @@ var MusicAlbum = function(node) {
 	Thing.apply(this, arguments);
 };
 
-MusicAlbum.prototype = new Thing;
+MusicAlbum.prototype = Object.create(Thing.prototype, {
+	artist: {
+		get: function() {
+			//var artist = Object.create(MusicGroup.prototype);
+			//Thing.call(artist, this.property('byArtist'));
+			var node = this.property('byArtist');
+
+			return (new MusicGroup(node)).serialize();
+		}
+	}
+});
 
 MusicAlbum.prototype.serialize = function() {
-	return {
-		type: this.type,
-		name: this.name,
-		url: this.url,
-		artist: (new MusicGroup(this.property('byArtist'))).serialize(),
-	}
-}
+	return $.extend(Thing.prototype.serialize.call(this), {
+		artist: this.artist,
+	});
+};

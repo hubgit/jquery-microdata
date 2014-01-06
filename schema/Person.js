@@ -2,4 +2,4 @@ var Person = function(node) {
 	Thing.apply(this, arguments);
 };
 
-Person.prototype = new Thing;
+Person.prototype = Object.create(Thing.prototype);
