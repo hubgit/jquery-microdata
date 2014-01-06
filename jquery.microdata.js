@@ -67,6 +67,48 @@
 		}
 	}
 
+	// set the value of a node
+	$.fn.setItemValue = function(value) {
+		var node = this[0];
+
+		switch (node.nodeName) {
+			case 'META':
+			return node.setAttribute('content', value);
+
+			case 'DATA':
+			return node.setAttribute('value', value);
+
+			case 'METER':
+			return node.setAttribute('value', value);
+
+			case 'TIME':
+			if (node.hasAttribute('datetime')) {
+				return node.setAttribute('datetime', value);
+			}
+
+			return node.textContent = value;
+
+			case 'AUDIO':
+			case 'EMBED':
+			case 'IFRAME':
+			case 'IMG':
+			case 'SOURCE':
+			case 'TRACK':
+			return node.setAttribute('src', value);
+
+			case 'A':
+			case 'AREA':
+			case 'LINK':
+			return node.setAttribute('href', value);
+
+			case 'OBJECT':
+			return node.setAttribute('data', value);
+
+			default:
+			return node.textContent = value;
+		}
+	}
+
 	/* helper functions */
 
 	// allow document.getElementById to be used in map()
@@ -133,11 +175,34 @@
 			}
 		});
 
-		// get the itemValue of an element
+		// get/set the itemValue of an element
 		Object.defineProperty($.fn, 'itemValue', {
 			get: function() {
 				return this.getItemValue();
+			},
+			set: function(value) {
+				// TODO: depends on type
 			}
+		});
+
+		// get/set the itemProp of an element
+		Object.defineProperty($.fn, 'itemProp', {
+			get: function() {
+				return this.attr('itemProp');
+			},
+			set: function(value) {
+				return this.attr('itemProp', value);
+			},
+		});
+
+		// get/set the itemType of an element
+		Object.defineProperty($.fn, 'itemType', {
+			get: function() {
+				return this.attr('itemType');
+			},
+			set: function(value) {
+				return this.attr('itemType', value);
+			},
 		});
 
 		// get the properties of a property node list with one element
