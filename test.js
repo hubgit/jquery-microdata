@@ -1,31 +1,34 @@
 $(function() {
-	var displayData = function(data, parent) {
-		var items = {};
+	var table = $('<table/>').appendTo('body');
+	var thead = $('<thead/>').appendTo(table);
+	var tbody = $('<tbody/>').appendTo(table);
 
-		data.each(function() {
-			var key = this[0];
-			var value = this[1];
+	var row = $('<tr/>').appendTo(thead);
+	$('<th/>', { text: 'album' }).appendTo(row);
+	$('<th/>', { text: 'artist' }).appendTo(row);
 
-			if (typeof items[key] == 'undefined') {
-				var row = $('<tr/>').appendTo(parent);
-				$('<th/>', { text: key }).appendTo(row);
+	var albums = $('#albumlist').getItems('http://schema.org/MusicAlbum').map(function() {
+		/* album */
+		var album = $(this).properties;
+		var row = $('<tr/>').appendTo(tbody);
 
-				var cell = $('<td/>').appendTo(row);
-				items[key] = cell;
-			}
+		var cell = $('<td/>').appendTo(row);
+		$('<a/>', { href: album.url[0].itemValue, text: album.name[0].itemValue }).appendTo(cell);
 
-			var container = $('<div/>').appendTo(items[key]);
+		/* artist */
+		var artist = album.byArtist[0].properties;
+		var cell = $('<td/>').appendTo(row);
 
-			if (typeof value == 'object') {
-				displayData(value, $('<table/>').appendTo(container));
-			} else {
-				$('<div/>').text(value).appendTo(container);
-			}
-		});
-	};
+		$('<a/>', { href: artist.url[0].itemValue, text: artist.name[0].itemValue }).appendTo(cell);
 
-	$('#albumlist').getItems('http://schema.org/MusicAlbum').each(function() {
-		var data = $(this).getData();
-		displayData(data, $('<table/>').appendTo('body'));
+		if (typeof artist.musicGroupMember !== 'undefined') {
+			var members = artist.musicGroupMember.values;
+			$('<div/>', { text: 'Members: ' + members.join(', ') }).appendTo(cell);
+		}
+
+		if (typeof artist.album !== 'undefined') {
+			var albums = artist.album.values;
+			$('<div/>', { text: 'Albums: ' + albums.join(', ') }).appendTo(cell);
+		}
 	});
 })
