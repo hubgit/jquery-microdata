@@ -8,68 +8,62 @@
 		});
 	};
 
-	// get the properties of an element
-	Object.defineProperty($.fn, 'properties', {
-		get: function() {
-			if (this.attr('itemref')) {
-				$.merge(this, spaceSeparate(this.attr('itemref')).map(getElementById));
-			}
+	$.fn.getProperties = function() {
+		if (this.attr('itemref')) {
+			$.merge(this, spaceSeparate(this.attr('itemref')).map(getElementById));
+		}
 
-			var properties = new HTMLPropertiesCollection(this);
+		var properties = new HTMLPropertiesCollection(this);
 
-			this.find('[itemprop]').not(this.find('[itemscope] [itemprop]')).map(function(index, node) {
-				spaceSeparate(node.getAttribute('itemprop')).map(function(propertyName) {
-					properties.push([propertyName, $(node)]);
-				});
+		this.find('[itemprop]').not(this.find('[itemscope] [itemprop]')).map(function(index, node) {
+			spaceSeparate(node.getAttribute('itemprop')).map(function(propertyName) {
+				properties.push([propertyName, $(node)]);
 			});
+		});
 
-			return properties;
-		}
-	});
+		return properties;
+	};
 
-	// get the itemValue of an element
-	Object.defineProperty($.fn, 'itemValue', {
-		get: function() {
-			var node = this[0];
+	$.fn.getItemValue = function() {
+		var node = this[0];
 
-			switch (node.nodeName) {
-				case 'META':
-				return node.getAttribute('content').trim();
+		switch (node.nodeName) {
+			case 'META':
+			return node.getAttribute('content').trim();
 
-				case 'DATA':
-				return node.getAttribute('value').trim();
+			case 'DATA':
+			return node.getAttribute('value').trim();
 
-				case 'METER':
-				return node.getAttribute('value').trim();
+			case 'METER':
+			return node.getAttribute('value').trim();
 
-				case 'TIME':
-				if (node.hasAttribute('datetime')) {
-					return node.getAttribute('datetime').trim();
-				}
-
-				return node.textContent.trim();
-
-				case 'AUDIO':
-				case 'EMBED':
-				case 'IFRAME':
-				case 'IMG':
-				case 'SOURCE':
-				case 'TRACK':
-				return node.src;
-
-				case 'A':
-				case 'AREA':
-				case 'LINK':
-				return node.href;
-
-				case 'OBJECT':
-				return node.data;
-
-				default:
-				return node.textContent.trim();
+			case 'TIME':
+			if (node.hasAttribute('datetime')) {
+				return node.getAttribute('datetime').trim();
 			}
+
+			return node.textContent.trim();
+
+			case 'AUDIO':
+			case 'EMBED':
+			case 'IFRAME':
+			case 'IMG':
+			case 'SOURCE':
+			case 'TRACK':
+			return node.src;
+
+			case 'A':
+			case 'AREA':
+			case 'LINK':
+			return node.href;
+
+			case 'OBJECT':
+			return node.data;
+
+			default:
+			return node.textContent.trim();
 		}
-	});
+	}
 
 	/* helper functions */
 
@@ -101,30 +95,70 @@
 		Array.prototype.push.call(this, item);
 	};
 
+	// get properties by name from a properties collection
 	HTMLPropertiesCollection.prototype.namedItem = function(name) {
 		return this[name];
 	};
 
-	Object.defineProperty(HTMLPropertiesCollection.prototype, 'names', {
-		get: function() {
-			return this.reduce(function(list, item) {
-				if (list.indexOf(item[0]) === -1) {
-					list.push(item[0]);
-				}
+	// get the names of properties in a properties collection
+	HTMLPropertiesCollection.prototype.getNames = function(name) {
+		return this.reduce(function(list, item) {
+			if (list.indexOf(item[0]) === -1) {
+				list.push(item[0]);
+			}
 
-				return list;
-			}, []);
-		}
-	});
+			return list;
+		}, []);
+	};
 
 	/* PropertyNodeList */
 
 	var PropertyNodeList = function() {};
 	PropertyNodeList.prototype = [];
 
+	// get values of all properties in a property node list
 	PropertyNodeList.prototype.getValues = function() {
 		return this.map(function(item, index) {
-			return $(item[0]).itemValue;
+			return $(item[0]).getItemValue();
 		});
 	};
+
+	// alias getters to get* methods if Object.defineProperty is available
+	// http://kangax.github.io/es5-compat-table/#Object.defineProperty
+	if (typeof Object.defineProperty === 'function') {
+		// get the properties of an element
+		Object.defineProperty($.fn, 'properties', {
+			get: function() {
+				return this.getProperties();
+			}
+		});
+
+		// get the itemValue of an element
+		Object.defineProperty($.fn, 'itemValue', {
+			get: function() {
+				return this.getItemValue();
+			}
+		});
+
+		// get the properties of a property node list with one element
+		Object.defineProperty(PropertyNodeList.prototype, 'properties', {
+			get: function() {
+				return this[0].getProperties();
+			}
+		});
+
+		// get the itemValue of a property node list with one element
+		Object.defineProperty(PropertyNodeList.prototype, 'itemValue', {
+			get: function() {
+				return this[0].getItemValue();
+			}
+		});
+
+		// get the names of properties in a properties collection
+		Object.defineProperty(HTMLPropertiesCollection.prototype, 'names', {
+			get: function() {
+				return this.getNames(name);
+			}
+		});
+	}
 }(jQuery));
