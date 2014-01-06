@@ -82,11 +82,7 @@
 			return node.setAttribute('value', value);
 
 			case 'TIME':
-			if (node.hasAttribute('datetime')) {
-				return node.setAttribute('datetime', value);
-			}
-
-			return node.textContent = value;
+			return node.setAttribute('datetime', value);
 
 			case 'AUDIO':
 			case 'EMBED':
