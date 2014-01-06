@@ -1,13 +1,14 @@
 (function($) {
 	/* jQuery methods for DOM elements */
 
-	// get all elements of a certain type
+	// get all item of a certain type
 	$.fn.getItems = function(itemtype) {
 		return this.find('[itemscope]').filter(function() {
 			return this.getAttribute('itemtype') == itemtype;
 		});
 	};
 
+	// get a collection of property nodes of an item
 	$.fn.getProperties = function() {
 		if (this.attr('itemref')) {
 			$.merge(this, spaceSeparate(this.attr('itemref')).map(getElementById));
@@ -24,6 +25,7 @@
 		return properties;
 	};
 
+	// get the value of a node
 	$.fn.getItemValue = function() {
 		var node = this[0];
 
@@ -77,9 +79,7 @@
 
 	/* HTMLPropertiesCollection */
 
-	var HTMLPropertiesCollection = function(node) {
-		this.node = node;
-	};
+	var HTMLPropertiesCollection = function() {};
 
 	HTMLPropertiesCollection.prototype = [];
 
