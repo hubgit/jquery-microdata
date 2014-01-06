@@ -1,3 +1,5 @@
+/* display using Microdata DOM API */
+
 $(function() {
 	var table = $('<table/>').appendTo('body');
 	var thead = $('<thead/>').appendTo(table);
@@ -35,4 +37,15 @@ $(function() {
 			$('<div/>', { text: 'Albums: ' + albums.join(', ') }).appendTo(cell);
 		}
 	});
+});
+
+/* convert to JSON using schema */
+
+$(function() {
+	var albums = $('#albumlist').getItems('http://schema.org/MusicAlbum').map(function(index, node) {
+		return (new MusicAlbum(node)).serialize();
+	});
+
+	var code = $('<code/>', { text: JSON.stringify(albums.toArray(), null, '  ') });
+	$('<pre/>').append(code).appendTo('body');
 })
