@@ -22,12 +22,12 @@ $(function() {
 		$('<a/>', { href: artist.url[0].itemValue, text: artist.name[0].itemValue }).appendTo(cell);
 
 		if (typeof artist.musicGroupMember !== 'undefined') {
-			var members = artist.musicGroupMember.values;
+			var members = artist.musicGroupMember.getValues();
 			$('<div/>', { text: 'Members: ' + members.join(', ') }).appendTo(cell);
 		}
 
 		if (typeof artist.album !== 'undefined') {
-			var albums = artist.album.values;
+			var albums = artist.album.getValues();
 			$('<div/>', { text: 'Albums: ' + albums.join(', ') }).appendTo(cell);
 		}
 	});
