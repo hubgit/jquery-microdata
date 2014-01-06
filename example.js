@@ -22,12 +22,16 @@ $(function() {
 		$('<a/>', { href: artist.url.itemValue, text: artist.name.itemValue }).appendTo(cell);
 
 		if (typeof artist.musicGroupMember !== 'undefined') {
-			var members = artist.musicGroupMember.getValues();
+			var members = artist.musicGroupMember.map(function(item) {
+				return item.properties.name.itemValue;
+			});
 			$('<div/>', { text: 'Members: ' + members.join(', ') }).appendTo(cell);
 		}
 
 		if (typeof artist.album !== 'undefined') {
-			var albums = artist.album.getValues();
+			var albums = artist.album.map(function(item) {
+				return item.properties.name.itemValue;
+			});
 			$('<div/>', { text: 'Albums: ' + albums.join(', ') }).appendTo(cell);
 		}
 	});
