@@ -11,9 +11,9 @@ $(function() {
 	$('<th/>', { text: 'album' }).appendTo(row);
 	$('<th/>', { text: 'artist' }).appendTo(row);
 
-	var albums = $('#albumlist').getItems('http://schema.org/MusicAlbum').map(function() {
+	var albums = $('#albumlist').items('http://schema.org/MusicAlbum').map(function() {
 		/* album */
-		var album = $(this).properties;
+		var album = this.properties;
 		var row = $('<tr/>').appendTo(tbody);
 
 		var cell = $('<td/>').appendTo(row);
@@ -44,7 +44,7 @@ $(function() {
 /* convert to JSON using schema */
 
 $(function() {
-	var albums = $('#albumlist').getItems('http://schema.org/MusicAlbum').map(function(index, node) {
+	var albums = $('#albumlist').items('http://schema.org/MusicAlbum').map(function(index, node) {
 		return (new MusicAlbum(node)).serialize();
 	});
 

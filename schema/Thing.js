@@ -1,6 +1,6 @@
 var Thing = function(node) {
 	this.node = node;
-	this.propertyList = $(node).properties;
+	this.propertyList = node.properties;
 };
 
 // all the properties with this name
@@ -21,7 +21,7 @@ Thing.prototype.value = function(name) {
 // properties serialised to JSON
 Thing.prototype.serialize = function() {
 	return {
-		type: $(this.node).itemType,
+		type: this.node.itemType,
 		name: this.value('name'),
 		url: this.value('url')
 	};
