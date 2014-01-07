@@ -1,0 +1,62 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>jQuery Things Example</title>
+
+<script src="jquery.min.js"></script>
+<script src="jquery.things.js"></script>
+<script src="example.js"></script>
+
+<style>
+  table { border-collapse: collapse; border: 1px solid #777; margin: 5px 0; }
+  th { text-align: left; }
+  th, td { vertical-align: top; padding: 2px 5px; }
+</style>
+
+<ol id="albumlist">
+  <li itemscope itemtype="http://schema.org/MusicAlbum">
+    <span itemprop="byArtist" itemscope itemtype="http://schema.org/MusicGroup">
+      <a itemprop="url" href="spotify:search:artist:Jesu">
+        <span itemprop="name">Jesu</span>
+      </a>
+    </span>
+    -
+    <a itemprop="url" href="spotify:search:artist:Jesu+album:Everyday+I+Get+Closer+To+The+Light">
+      <span itemprop="name">Everyday I Get Closer To The Light</span>
+    </a>
+  </li>
+  <li itemscope itemtype="http://schema.org/MusicAlbum">
+    <span itemprop="byArtist" itemscope itemtype="http://schema.org/MusicGroup">
+      <a itemprop="url" href="spotify:search:artist:Deafheaven">
+        <span itemprop="name">Deafheaven</span>
+      </a>
+    </span>
+    -
+    <a itemprop="url" href="spotify:search:artist:Deafheaven+album:Sunbather">
+      <span itemprop="name">Sunbather</span>
+    </a>
+  </li>
+  <li itemscope itemtype="http://schema.org/MusicAlbum">
+    <span itemprop="byArtist" itemscope itemtype="http://schema.org/MusicGroup"
+        itemref="tomahawk-members tomahawk-albums">
+      <a itemprop="url" href="spotify:search:artist:Tomahawk">
+        <span itemprop="name">Tomahawk</span>
+      </a>
+    </span>
+    -
+    <a itemprop="url" href="spotify:search:artist:Tomahawk+album:Oddfellows">
+      <span itemprop="name">Oddfellows</span>
+    </a>
+  </li>
+</ol>
+
+<ul id="tomahawk-members">
+  <li itemprop="musicGroupMember" itemscope itemtype="http://schema.org/Person"><span itemprop="name">Member One</span></li>
+  <li itemprop="musicGroupMember" itemscope itemtype="http://schema.org/Person"><span itemprop="name">Member Two</span></li>
+  <li itemprop="musicGroupMember" itemscope itemtype="http://schema.org/Person"><span itemprop="name">Member Three</span></li>
+</ul>
+
+<ul id="tomahawk-albums">
+  <li itemprop="album" itemscope itemtype="http://schema.org/MusicAlbum"><span itemprop="name">Album One</span></li>
+  <li itemprop="album" itemscope itemtype="http://schema.org/MusicAlbum"><span itemprop="name">Album Two</span></li>
+  <li itemprop="album" itemscope itemtype="http://schema.org/MusicAlbum"><span itemprop="name">Album Three</span></li>
+</ul>
