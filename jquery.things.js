@@ -115,7 +115,7 @@
 			});
 	}
 
-	// get the value of  single node or multiple nodes by name
+	// get the value of a single node or multiple nodes by name
 	Thing.prototype.get = function(name) {
 		var plural = name.match(/\+$/);
 
