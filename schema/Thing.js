@@ -8,21 +8,25 @@ Thing.prototype.properties = function(name) {
 	return this.propertyList[name] || [];
 };
 
-// the first property with this name
-Thing.prototype.property = function(name) {
-	return this.propertyList[name] ? this.propertyList[name][0] : null;
-};
+// map a node to an object
+Thing.prototype.map = function(propertyName) {
+	return this.properties(propertyName).map(function(node) {
+		if (node.itemType) {
+			var itemType = node.itemType.replace(/http:\/\/schema\.org\//, '');
+			var item = new window[itemType](node);
 
-// the value of the first property with this name
-Thing.prototype.value = function(name) {
-	return this.propertyList[name] ? this.propertyList[name][0].itemValue : null;
+			return item.serialize();
+		}
+
+		return node.itemValue;
+	});
 };
 
 // properties serialised to JSON
 Thing.prototype.serialize = function() {
 	return {
 		type: this.node.itemType,
-		name: this.value('name'),
-		url: this.value('url')
+		name: this.map('name')[0],
+		url: this.map('url')[0]
 	};
 };
