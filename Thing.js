@@ -9,13 +9,12 @@ Thing.prototype.properties = function(name) {
 };
 
 // map a node to an object
-Thing.prototype.map = function(propertyName) {
+Thing.prototype.get = function(propertyName) {
 	return this.properties(propertyName).map(function(node) {
 		if (node.itemType) {
-			var itemType = node.itemType.replace(/http:\/\/schema\.org\//, '');
-			var item = new window[itemType](node);
+			var item = new Thing(node);
 
-			return item.serialize();
+			return item.data();
 		}
 
 		return node.itemValue;
@@ -23,10 +22,14 @@ Thing.prototype.map = function(propertyName) {
 };
 
 // properties serialised to JSON
-Thing.prototype.serialize = function() {
-	return {
+Thing.prototype.data = function() {
+	var data = {
 		type: this.node.itemType,
-		name: this.map('name')[0],
-		url: this.map('url')[0]
 	};
+
+	this.propertyList.names.forEach(function(name) {
+		data[name] = this.get(name);
+	}, this);
+
+	return data;
 };

@@ -17,7 +17,9 @@
 		var properties = new HTMLPropertiesCollection();
 
 		this.find('[itemprop]').not(this.find('[itemscope] [itemprop]')).map(function(index, node) {
-			spaceSeparate(node.getAttribute('itemprop')).map(function(propertyName) {
+			var propertyNames = spaceSeparate(node.itemProp);
+
+			$.map(propertyNames, function(propertyName) {
 				properties.push([propertyName, node]);
 			});
 		});
