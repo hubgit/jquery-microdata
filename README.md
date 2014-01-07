@@ -22,7 +22,7 @@
  
 * Thing.data() => a properties object with name keys and property values
 
-    `things.data()` => { key: [values] }
+    `thing.data()` => { key: [values] }
 
 * Thing.nodes(property) => an array of nodes with this itemprop attribute
 
