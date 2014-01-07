@@ -1,7 +1,5 @@
 /* display using Microdata DOM API */
 
-"use strict";
-
 $(function() {
 	var table = $('<table/>').appendTo('body');
 	var thead = $('<thead/>').appendTo(table);
@@ -11,41 +9,43 @@ $(function() {
 	$('<th/>', { text: 'album' }).appendTo(row);
 	$('<th/>', { text: 'artist' }).appendTo(row);
 
-	var albums = $('#albumlist').items('http://schema.org/MusicAlbum').map(function(index, node) {
-		/* album */
-		var album = node.properties;
+	var albums = $('#albumlist').things('http://schema.org/MusicAlbum').map(function(index, album) {
+		// album
 		var row = $('<tr/>').appendTo(tbody);
 
 		var cell = $('<td/>').appendTo(row);
-		$('<a/>', { href: album.url[0].itemValue, text: album.name[0].itemValue }).appendTo(cell);
+		$('<a/>', { href: album.get('url'), text: album.get('name') }).appendTo(cell);
 
-		/* artist */
-		var artist = album.byArtist[0].properties;
+		// artist
+		var artist = album.get('byArtist');
 		var cell = $('<td/>').appendTo(row);
 
-		$('<a/>', { href: artist.url[0].itemValue, text: artist.name[0].itemValue }).appendTo(cell);
+		$('<a/>', { href: artist.get('url'), text: artist.get('name') }).appendTo(cell);
 
-		if (typeof artist.musicGroupMember !== 'undefined') {
-			var members = artist.musicGroupMember.map(function(item) {
-				return item.properties.name[0].itemValue;
-			});
+		var members = artist.get('musicGroupMember+').map(function(item) {
+			return item.get('name');
+		});
+
+		if (members.length) {
 			$('<div/>', { text: 'Members: ' + members.join(', ') }).appendTo(cell);
 		}
 
-		if (typeof artist.album !== 'undefined') {
-			var albums = artist.album.map(function(item) {
-				return item.properties.name[0].itemValue;
-			});
+		var albums = artist.get('album+').map(function(item) {
+			return item.get('name');
+		});
+
+		if (albums.length) {
 			$('<div/>', { text: 'Albums: ' + albums.join(', ') }).appendTo(cell);
 		}
 	});
 });
 
-/* convert to JSON using schema */
+/* convert to JSON */
 
 $(function() {
-	var albums = $('#albumlist').items('http://schema.org/MusicAlbum').map(function(index, node) {
-		return (new Thing(node)).data();
+	var albums = $('#albumlist').things('http://schema.org/MusicAlbum').map(function() {
+		//return this.get('byArtist').get('name');
+		return this.data();
 	});
 
 	var code = $('<code/>', { text: JSON.stringify(albums.toArray(), null, 2) });

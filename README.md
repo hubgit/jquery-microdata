@@ -1,17 +1,21 @@
-    $(document).getItems(itemtype)
-        => Node[]
-            .getProperties()
-                => Array[] HTMLPropertiesCollection
-                    .namedItem(name) or [name]
-                        => Node[] PropertyNodeList
-                            .itemValue
+# jQuery Things
 
+A new approach to the HTML5 Microdata API
 
+## Methods
 
-    $(document).getItems('http://schema.org/MusicAlbum')[0].properties.namedItem('byArtist')[0].properties.namedItem('url')[0].itemValue;
-    $(document).getItems('http://schema.org/MusicAlbum')[0].properties['byArtist'][0].properties['url'][0].itemValue;
-    $(document).getItems('http://schema.org/MusicAlbum')[0].properties.byArtist[0].properties.url[0].itemValue;
-    $(document).getItems('http://schema.org/MusicAlbum')[0].properties.byArtist.properties.url.itemValue;
-    //$(document).items('http://schema.org/MusicAlbum')[0].property('byArtist').property('url').itemValue;
-    //items['http://schema.org/MusicAlbum'][0]['byArtist']['url'];
+* $().things(itemtype) => an array of Thing objects
+    $('#albumlist').things('http://schema.org/MusicAlbum') => [Thing, Thing, Thing]
 
+* Thing.get(property) => a literal value or a Thing
+    thing.get('name') => string
+    thing.get('byArtist') => Thing
+    thing.get('byArtist').get('name') => string
+
+* Thing.get(property+) => an array of literal values or Things
+    thing.get('name+') => [string]
+    thing.get('byArtist').get('album+') => [Thing, Thing, Thing]
+
+* Thing.nodes(property) => an array of DOM nodes with this itemprop attribute
+
+* $().value(value) => set the itemValue of a DOM node
