@@ -1,7 +1,5 @@
 # jQuery Things
 
-A new approach to the HTML Microdata API
-
 ## Methods
 
 * $(node).things(itemtype) => an array of Thing objects
