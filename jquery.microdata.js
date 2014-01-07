@@ -91,20 +91,6 @@
 		});
 	};
 
-	// get the properties of a property node list with one element
-	Object.defineProperty(PropertyNodeList.prototype, 'properties', {
-		get: function() {
-			return this[0].properties;
-		}
-	});
-
-	// get the itemValue of a property node list with one element
-	Object.defineProperty(PropertyNodeList.prototype, 'itemValue', {
-		get: function() {
-			return this[0].itemValue;
-		}
-	});
-
 	/* add methods to DOM elements */
 
 	// get/set the itemValue of an element
