@@ -11,9 +11,9 @@ $(function() {
 	$('<th/>', { text: 'album' }).appendTo(row);
 	$('<th/>', { text: 'artist' }).appendTo(row);
 
-	var albums = $('#albumlist').items('http://schema.org/MusicAlbum').map(function() {
+	var albums = document.getElementById('albumlist').items('http://schema.org/MusicAlbum').map(function(item) {
 		/* album */
-		var album = this.properties;
+		var album = item.properties;
 		var row = $('<tr/>').appendTo(tbody);
 
 		var cell = $('<td/>').appendTo(row);
@@ -44,10 +44,10 @@ $(function() {
 /* convert to JSON using schema */
 
 $(function() {
-	var albums = $('#albumlist').items('http://schema.org/MusicAlbum').map(function(index, node) {
+	var albums = document.getItems('http://schema.org/MusicAlbum').map(function(node) {
 		return (new MusicAlbum(node)).serialize();
 	});
 
-	var code = $('<code/>', { text: JSON.stringify(albums.toArray(), null, 2) });
+	var code = $('<code/>', { text: JSON.stringify(albums, null, 2) });
 	$('<pre/>').append(code).appendTo('body');
 })
