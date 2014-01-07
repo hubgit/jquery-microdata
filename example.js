@@ -2,7 +2,6 @@
 
 $(function() {
 	var albums = $('#albumlist').things('http://schema.org/MusicAlbum').map(function() {
-		//return this.get('byArtist').get('name');
 		return this.data();
 	});
 
