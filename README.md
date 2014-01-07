@@ -1,6 +1,6 @@
 # jQuery Things
 
-A new approach to the HTML5 Microdata API
+A new approach to the HTML Microdata API
 
 ## Methods
 
