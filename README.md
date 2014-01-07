@@ -19,6 +19,10 @@
     `thing.get('name+')` => [string]
 
     `thing.get('byArtist').get('album+')` => [Thing, Thing, Thing]
+ 
+* Thing.data() => a properties object with name keys and property values
+
+    `things.data()` => { key: [values] }
 
 * Thing.nodes(property) => an array of nodes with this itemprop attribute
 
