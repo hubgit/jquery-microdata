@@ -13,21 +13,25 @@
 	// get or set the itemValue of a node
 	$.fn.value = function(value) {
 		if (this.is('[itemscope]')) {
+			if (typeof value != 'undefined') {
+				throw 'Not allowed to set the value of an itemscope node';
+			}
+
 			return new Thing(this);
 		}
 
 		switch (this.get(0).nodeName) {
 			case 'META':
-			return value == null ? this.attr('content').trim() : this.attr('content', value);
+			return typeof value == 'undefined' ? this.attr('content').trim() : this.attr('content', value);
 
 			case 'DATA':
-			return value == null ? this.attr('value').trim() : this.attr('value', value);
+			return typeof value == 'undefined' ? this.attr('value').trim() : this.attr('value', value);
 
 			case 'METER':
-			return value == null ? this.attr('value').trim() : this.attr('value', value);
+			return typeof value == 'undefined' ? this.attr('value').trim() : this.attr('value', value);
 
 			case 'TIME':
-			if (value == null) {
+			if (typeof value == 'undefined') {
 				if (this.attr('datetime')) {
 					return this.attr('datetime').trim();
 				}
@@ -42,18 +46,18 @@
 			case 'IMG':
 			case 'SOURCE':
 			case 'TRACK':
-			return value == null ? this.get(0).src : this.attr('src', value);
+			return typeof value == 'undefined' ? this.get(0).src : this.attr('src', value);
 
 			case 'A':
 			case 'AREA':
 			case 'LINK':
-			return value == null ? this.get(0).href : this.attr('href', value);
+			return typeof value == 'undefined' ? this.get(0).href : this.attr('href', value);
 
 			case 'OBJECT':
-			return value == null ? this.get(0).data : this.attr('data', value);
+			return typeof value == 'undefined' ? this.get(0).data : this.attr('data', value);
 
 			default:
-			if (value == null) {
+			if (typeof value == 'undefined') {
 				return this.text().trim();
 			}
 
