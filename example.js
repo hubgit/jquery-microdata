@@ -1,3 +1,10 @@
+/* set a value */
+
+$(function() {
+	var albums = $('#albumlist').things('http://schema.org/MusicAlbum');
+	albums[0].get('byArtist').set('name', 'Jesu').set('url', 'https://en.wikipedia.org/wiki/Jesu')
+});
+
 /* convert to JSON */
 
 $(function() {
@@ -7,13 +14,6 @@ $(function() {
 
 	var code = $('<code/>', { text: JSON.stringify(albums.toArray(), null, 2) });
 	$('<pre/>').append(code).appendTo('body');
-});
-
-/* set a value */
-
-$(function() {
-	var albums = $('#albumlist').things('http://schema.org/MusicAlbum');
-	albums[0].get('byArtist').set('name', 'Jesu').set('url', 'https://en.wikipedia.org/wiki/Jesu')
 });
 
 /* display in a table */
