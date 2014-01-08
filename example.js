@@ -41,7 +41,7 @@ $(function() {
 		$('<a/>', { href: artist.get('url'), text: artist.get('name') }).appendTo(cell);
 
 		// group's members
-		var members = artist.get('musicGroupMember+').map(function(item) {
+		var members = $.map(artist.get('musicGroupMember+'), function(item) {
 			return item.get('name');
 		});
 
@@ -50,7 +50,7 @@ $(function() {
 		}
 
 		// group's albums
-		var albums = artist.get('album+').map(function(item) {
+		var albums = $.map(artist.get('album+'), function(item) {
 			return item.get('name');
 		});
 

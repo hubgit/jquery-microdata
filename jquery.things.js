@@ -22,21 +22,21 @@
 
 		switch (this.get(0).nodeName) {
 			case 'META':
-			return typeof value == 'undefined' ? this.attr('content').trim() : this.attr('content', value);
+			return typeof value == 'undefined' ? $.trim(this.attr('content')) : this.attr('content', value);
 
 			case 'DATA':
-			return typeof value == 'undefined' ? this.attr('value').trim() : this.attr('value', value);
+			return typeof value == 'undefined' ? $.trim(this.attr('value')) : this.attr('value', value);
 
 			case 'METER':
-			return typeof value == 'undefined' ? this.attr('value').trim() : this.attr('value', value);
+			return typeof value == 'undefined' ? $.trim(this.attr('value')) : this.attr('value', value);
 
 			case 'TIME':
 			if (typeof value == 'undefined') {
 				if (this.attr('datetime')) {
-					return this.attr('datetime').trim();
+					return $.trim(this.attr('datetime'));
 				}
 
-				return this.text().trim();
+				return $.trim(this.text());
 			}
 			return this.attr('datetime', value);
 
@@ -58,7 +58,7 @@
 
 			default:
 			if (typeof value == 'undefined') {
-				return this.text().trim();
+				return $.trim(this.text());
 			}
 
 			return this.text(value);
@@ -72,8 +72,8 @@
 			return [];
 		}
 
-		return text.split(/\s+/).filter(function() {
-			return this;
+		return $.grep(text.split(/\s+/), function(item) {
+			return item;
 		});
 	}
 
@@ -86,7 +86,7 @@
 
 	// build an array of [name, node] property pairs
 	Thing.prototype.properties = function() {
-		var refs = this.node.attrs('itemref').map(function(ref) {
+		var refs = $.map(this.node.attrs('itemref'), function(ref) {
 			return document.getElementById(ref);
 		});
 
@@ -96,9 +96,8 @@
 			.not(nodes.find('[itemscope] [itemprop]'))
 			.map(function() {
 				var node = $(this);
-				var props = node.attrs('itemprop');
 
-				return $.map(props, function(propertyName) {
+				return $.map(node.attrs('itemprop'), function(propertyName) {
 					return [[propertyName, node]];
 				});
 			});
