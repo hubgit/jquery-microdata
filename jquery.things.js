@@ -131,6 +131,16 @@
 		return plural ? properties.toArray() : properties[0];
 	};
 
+	// set the value of a single node or multiple nodes by name
+	Thing.prototype.set = function(name, value) {
+		this.nodes(name).each(function() {
+			$(this).value(value);
+		});
+
+		return this;
+	};
+
+
 	// properties as a data object
 	Thing.prototype.data = function() {
 		var data = {

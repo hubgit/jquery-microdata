@@ -9,6 +9,13 @@ $(function() {
 	$('<pre/>').append(code).appendTo('body');
 });
 
+/* set a value */
+
+$(function() {
+	var albums = $('#albumlist').things('http://schema.org/MusicAlbum');
+	albums[0].get('byArtist').set('name', 'Jesu').set('url', 'https://en.wikipedia.org/wiki/Jesu')
+});
+
 /* display in a table */
 
 $(function() {
@@ -20,7 +27,7 @@ $(function() {
 	$('<th/>', { text: 'album' }).appendTo(row);
 	$('<th/>', { text: 'artist' }).appendTo(row);
 
-	var albums = $('#albumlist').things('http://schema.org/MusicAlbum').map(function(index, album) {
+	$('#albumlist').things('http://schema.org/MusicAlbum').map(function(index, album) {
 		// album
 		var row = $('<tr/>').appendTo(tbody);
 
