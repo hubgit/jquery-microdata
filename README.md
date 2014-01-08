@@ -26,7 +26,7 @@ Thing.get(property+) => an array of literal values or Things
 
 ### Set a property of a thing
 
-Thing.set(property)
+Thing.set(property, value)
 
 	thing.get('byArtist')
 	     .set('name', 'The Beatles')
