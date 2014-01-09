@@ -2,6 +2,8 @@
 
 Extract and manipulate objects stored in [HTML Microdata](http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html), using a simple interface.
 
+[Demonstration](http://git.macropus.org/jquery-microdata/)
+
 ### Get all items of a certain type
 
 $(node).items(itemtype)
