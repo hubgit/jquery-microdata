@@ -1,3 +1,7 @@
+This plugin was an experiment in implementing the HTML Microdata DOM API.
+
+You probably want to use [jQuery Things](https://github.com/hubgit/jquery-things) instead.
+    
     $(document).getItems(itemtype)
         => Node[]
             .getProperties()
@@ -12,6 +16,3 @@
     $(document).getItems('http://schema.org/MusicAlbum')[0].properties['byArtist'][0].properties['url'][0].itemValue;
     $(document).getItems('http://schema.org/MusicAlbum')[0].properties.byArtist[0].properties.url[0].itemValue;
     $(document).getItems('http://schema.org/MusicAlbum')[0].properties.byArtist.properties.url.itemValue;
-    //$(document).items('http://schema.org/MusicAlbum')[0].property('byArtist').property('url').itemValue;
-    //items['http://schema.org/MusicAlbum'][0]['byArtist']['url'];
-
