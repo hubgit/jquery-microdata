@@ -25,8 +25,8 @@ $(node).microdata(property, value)
 	$(node).microdata('name', 'Yellow Submarine')
 
 	$(node).microdata('byArtist')
-	     .microdata('name', 'The Beatles')
-	     .microdata('url', 'https://en.wikipedia.org/wiki/The_Beatles')
+	       .microdata('name', 'The Beatles')
+	       .microdata('url', 'https://en.wikipedia.org/wiki/The_Beatles')
 
  ### Get a property as an array
 
