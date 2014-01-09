@@ -20,11 +20,11 @@ Thing.data(property) => a literal value or a Thing
 
 ### Get a property of a thing as an array of items
 
-Thing.data(property+) => an array of literal values or Things
+Thing.data(property, true) => an array of literal values or Things
 
-    thing.data('name+') => [string]
+    thing.data('name', true) => [string]
 
-    thing.data('byArtist').data('album+') => [Thing, Thing, Thing]
+    thing.data('byArtist').data('album', true) => [Thing, Thing, Thing]
 
 ### Set a property of a thing
 

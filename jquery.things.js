@@ -115,17 +115,10 @@
 	}
 
 	// get the value of a single node or multiple nodes by name
-	Thing.prototype.get = function(name) {
-		var plural = name.match(/\+$/);
-
-		if (plural) {
-			name = name.replace(/\+$/, '');
-		}
-
-		var properties = this.nodes(name)
-			.map(function() {
-				return this.value()
-			});
+	Thing.prototype.get = function(name, plural) {
+		var properties = this.nodes(name).map(function() {
+			return this.value();
+		});
 
 		return plural ? properties.toArray() : properties[0];
 	};
@@ -142,12 +135,12 @@
 
 	// properties as a data object
 	Thing.prototype.data = function(name, value) {
-		if (typeof value !== 'undefined') {
+		if (typeof value !== 'undefined' && typeof value !== 'boolean') {
 			return this.set(name, value);
 		}
 
 		if (typeof name !== 'undefined') {
-			return this.get(name);
+			return this.get(name, value);
 		}
 
 		var data = {
@@ -156,19 +149,18 @@
 
 		this.propertyList.each(function() {
 			var name = this[0];
-			var node = this[1];
-			var property = node.value();
+			var property = this[1].value();
 
 			if (property instanceof Thing) {
 				property = property.data();
 			}
 
 			if (typeof data[name] == 'undefined') {
-				data[name] = property;
+				data[name] = property; // first item (literal)
 			} else if ($.isArray(data[name])) {
-				data[name].push(property);
+				data[name].push(property); // more items (array)
 			} else {
-				data[name] = [data[name], property];
+				data[name] = [data[name], property]; // second item (array)
 			}
 		});
 
