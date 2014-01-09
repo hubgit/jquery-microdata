@@ -28,9 +28,9 @@ $(node).microdata(property, value)
 	       .microdata('name', 'The Beatles')
 	       .microdata('url', 'https://en.wikipedia.org/wiki/The_Beatles')
 
- ### Get a property as an array
+### Get a property as an array
 
- $(node).microdata(property, true) => an array of literal values or jQuery objects
+$(node).microdata(property, true) => an array of literal values or jQuery objects
 
     $(node).microdata('name', true) => [ string, string ]
 
