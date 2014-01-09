@@ -1,6 +1,6 @@
 # jQuery Things
 
-Extract and manipulate objects stored in [HTML Microdata markup](http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html), using a simple API.
+Extract and manipulate objects stored in [HTML Microdata](http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html), using a simple API.
 
 ### Get all the things of a certain type
 
