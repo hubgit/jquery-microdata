@@ -141,7 +141,15 @@
 
 
 	// properties as a data object
-	Thing.prototype.data = function() {
+	Thing.prototype.data = function(name, value) {
+		if (typeof value !== 'undefined') {
+			return this.set(name, value);
+		}
+
+		if (typeof name !== 'undefined') {
+			return this.get(name);
+		}
+
 		var data = {
 			type: this.node.attr('itemtype'),
 		};
