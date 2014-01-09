@@ -108,9 +108,11 @@
 
 	// all nodes with a certain property name
 	$.fn.propertyNodes = function(name) {
-		return $.grep(this.propertyList(), function(item) {
+		var items = $.grep(this.propertyList(), function(item) {
 			return item[0] == name;
-		}).map(function(item) {
+		});
+
+		return $.map(items, function(item) {
 			return item[1];
 		});
 	};
