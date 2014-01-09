@@ -1,4 +1,14 @@
-(function($) {
+/*
+ * jQuery Things v1.0
+ * https://github.com/hubgit/jquery-things
+ *
+ * Copyright 2014 Alf Eaton
+ * Released under the MIT license
+ * http://git.macropus.org/mit-license/
+ *
+ * Date: 2014-01-09
+ */
+ (function($) {
 	// get all items of a certain type
 	$.fn.things = function(itemtype) {
 		return this.find('[itemscope]')
