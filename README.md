@@ -32,6 +32,12 @@ $(node).microdata(property, value)
 
  $(node).microdata(property, true) => an array of literal values or jQuery objects
 
-     $(node).microdata('name', true) => [ string, string ]
+    $(node).microdata('name', true) => [ string, string ]
 
-     $(node).microdata('byArtist').microdata('album', true) => [ jQuery object, jQuery object ]
+    $(node).microdata('byArtist').microdata('album', true) => [ jQuery object, jQuery object ]
+
+### Get all properties
+
+$(node).microdata()
+
+    $('#albumlist').items('http://schema.org/MusicAlbum').microdata()
