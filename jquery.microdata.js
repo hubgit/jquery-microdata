@@ -1,208 +1,172 @@
-(function($) {
-	/* jQuery methods */
-
+/*
+ * jQuery Microdata v1.0
+ * https://github.com/hubgit/jquery-microdata
+ *
+ * Copyright 2014 Alf Eaton
+ * Released under the MIT license
+ * http://git.macropus.org/mit-license/
+ *
+ * Date: 2014-01-09
+ */
+ (function($) {
 	// get all items of a certain type
 	$.fn.items = function(itemtype) {
 		return this.find('[itemscope]').filter(function() {
-			return this.getAttribute('itemtype') == itemtype;
+			return $(this).itemType().indexOf(itemtype) !== -1;
 		});
 	};
 
-	// get a collection of properties of an item as [name, property node]
-	$.fn.properties = function() {
-		if (this.attr('itemref')) {
-			$.merge(this, spaceSeparate(this.attr('itemref')).map(getElementById));
+	$.fn.itemType = function() {
+		return String(this.attr('itemType')).split(/\s+/);
+	};
+
+	$.fn.itemProp = function() {
+		return String(this.attr('itemProp')).split(/\s+/);
+	};
+
+	$.fn.itemRef = function() {
+		return String(this.attr('itemRef')).split(/\s+/);
+	};
+
+	// get or set the itemValue of a node
+	$.fn.itemValue = function(value) {
+		if (this.is('[itemscope]')) {
+			if (typeof value != 'undefined') {
+				throw 'Not allowed to set the value of an itemscope node';
+			}
+
+			return this;
 		}
 
-		var properties = new HTMLPropertiesCollection();
+		switch (this.get(0).nodeName) {
+			case 'META':
+			return typeof value == 'undefined' ? $.trim(this.attr('content')) : this.attr('content', value);
 
-		this.find('[itemprop]').not(this.find('[itemscope] [itemprop]')).map(function(index, node) {
-			spaceSeparate(node.getAttribute('itemprop')).map(function(propertyName) {
-				properties.push([propertyName, node]);
+			case 'DATA':
+			return typeof value == 'undefined' ? $.trim(this.attr('value')) : this.attr('value', value);
+
+			case 'METER':
+			return typeof value == 'undefined' ? $.trim(this.attr('value')) : this.attr('value', value);
+
+			case 'TIME':
+			if (typeof value == 'undefined') {
+				if (this.attr('datetime')) {
+					return $.trim(this.attr('datetime'));
+				}
+
+				return $.trim(this.text());
+			}
+			return this.attr('datetime', value);
+
+			case 'AUDIO':
+			case 'EMBED':
+			case 'IFRAME':
+			case 'IMG':
+			case 'SOURCE':
+			case 'TRACK':
+			return typeof value == 'undefined' ? this.get(0).src : this.attr('src', value);
+
+			case 'A':
+			case 'AREA':
+			case 'LINK':
+			return typeof value == 'undefined' ? this.get(0).href : this.attr('href', value);
+
+			case 'OBJECT':
+			return typeof value == 'undefined' ? this.get(0).data : this.attr('data', value);
+
+			default:
+			if (typeof value == 'undefined') {
+				return $.trim(this.text());
+			}
+
+			return this.text(value);
+		}
+	};
+
+	// build an array of [name, node] property pairs
+	// TOOD: cache this on the node
+	$.fn.propertyList = function() {
+		var refs = $.map(this.itemRef(), function(ref) {
+			return $('#' + ref);
+		});
+
+		var nodes = $.merge($(refs), this);
+
+		return nodes.find('[itemprop]')
+			.not(nodes.find('[itemscope] [itemprop]'))
+			.map(function() {
+				var node = $(this);
+
+				return $.map(node.itemProp(), function(propertyName) {
+					return [[propertyName, node]];
+				});
 			});
-		});
-
-		return properties;
 	};
 
-	// get/set the value of an item
-	$.fn.value = function(value) {
-		if (value === null) {
-			return this[0].itemValue;
-		}
-
-		this[0].itemValue = value;
-	};
-
-	/* helper functions */
-
-	// allow document.getElementById to be used in map()
-	var getElementById = document.getElementById.bind(document);
-
-	// split an attribute on spaces
-	var spaceSeparate = function(text) {
-		return text.split(/\s+/).filter(function() { return this });
-	};
-
-	/* HTMLPropertiesCollection */
-
-	var HTMLPropertiesCollection = function(){};
-	HTMLPropertiesCollection.prototype = [];
-
-	HTMLPropertiesCollection.prototype.push = function(item) {
-		var name = item[0];
-
-		if (typeof this[name] === 'undefined') {
-			this[name] = new PropertyNodeList;
-		}
-
-		this[name].push(item[1]);
-
-		Array.prototype.push.call(this, item);
-	};
-
-	// get properties by name from a properties collection
-	HTMLPropertiesCollection.prototype.namedItem = function(name) {
-		return this[name];
-	};
-
-	// get the names of properties in a properties collection
-	Object.defineProperty(HTMLPropertiesCollection.prototype, 'names', {
-		get: function() {
-			return this.reduce(function(list, item) {
-				if (list.indexOf(item[0]) === -1) {
-					list.push(item[0]);
-				}
-
-				return list;
-			}, []);
-		}
-	});
-
-	/* PropertyNodeList */
-
-	var PropertyNodeList = function(){};
-	PropertyNodeList.prototype = [];
-
-	// get values of all properties in a property node list
-	PropertyNodeList.prototype.getValues = function() {
-		return this.map(function(item, index) {
-			return item[0].itemValue;
+	// all nodes with a certain property name
+	$.fn.propertyNodes = function(name) {
+		return this.propertyList().filter(function() {
+			return this[0] == name;
+		}).map(function() {
+			return this[1];
 		});
 	};
 
-	/* add methods to DOM elements */
+	// all values with a certain property name
+	$.fn.propertyValues = function(name) {
+		return this.propertyNodes(name).map(function() {
+			return this.itemValue();
+		});
+	};
 
-	// get/set the itemValue of an element
-	Object.defineProperty(Element.prototype, 'itemValue', {
-		get: function() {
-			switch (this.nodeName) {
-				case 'META':
-				return this.getAttribute('content').trim();
+	// properties as a data object
+	$.fn.microdata = function(name, value) {
+		if (this.length > 1) {
+			return this.map(function() {
+				return $(this).microdata();
+			}).toArray();
+		};
 
-				case 'DATA':
-				return this.getAttribute('value').trim();
-
-				case 'METER':
-				return this.getAttribute('value').trim();
-
-				case 'TIME':
-				if (this.hasAttribute('datetime')) {
-					return this.getAttribute('datetime').trim();
-				}
-
-				return this.textContent.trim();
-
-				case 'AUDIO':
-				case 'EMBED':
-				case 'IFRAME':
-				case 'IMG':
-				case 'SOURCE':
-				case 'TRACK':
-				return this.src;
-
-				case 'A':
-				case 'AREA':
-				case 'LINK':
-				return this.href;
-
-				case 'OBJECT':
-				return this.data;
-
-				default:
-				return this.textContent.trim();
+		// get/set a specific property
+		if (typeof name !== 'undefined') {
+			// get the value of multiple nodes by name
+			if (typeof value === 'boolean') {
+				return this.propertyValues(name);
 			}
-		},
-		set: function(value) {
-			switch (this.nodeName) {
-				case 'META':
-				return this.setAttribute('content', value);
 
-				case 'DATA':
-				return this.setAttribute('value', value);
+			// set the value of a single node or multiple nodes by name
+			if (typeof value !== 'undefined') {
+				this.propertyNodes(name).each(function() {
+					$(this).itemValue(value);
+				});
 
-				case 'METER':
-				return this.setAttribute('value', value);
-
-				case 'TIME':
-				return this.setAttribute('datetime', value);
-
-				case 'AUDIO':
-				case 'EMBED':
-				case 'IFRAME':
-				case 'IMG':
-				case 'SOURCE':
-				case 'TRACK':
-				return this.setAttribute('src', value);
-
-				case 'A':
-				case 'AREA':
-				case 'LINK':
-				return this.setAttribute('href', value);
-
-				case 'OBJECT':
-				return this.setAttribute('data', value);
-
-				default:
-				return this.textContent = value;
+				return this;
 			}
+
+			// get the value of a single node
+			return this.propertyValues(name)[0];
 		}
-	});
 
-	// get the properties of an element
-	Object.defineProperty(Element.prototype, 'properties', {
-		get: function() {
-			return $(this).properties();
-		}
-	});
+		// the object always includes an itemtype
+		var data = {
+			type: this.itemType()
+		};
 
-	// get/set the itemProp of an element
-	Object.defineProperty(Element.prototype, 'itemProp', {
-		get: function() {
-			return this.getAttribute('itemProp');
-		},
-		set: function(value) {
-			return this.setAttribute('itemProp', value);
-		},
-	});
+		this.propertyList().each(function() {
+			var name = this[0];
+			var property = this[1].itemValue();
 
-	// get/set the itemType of an element
-	Object.defineProperty(Element.prototype, 'itemType', {
-		get: function() {
-			return this.getAttribute('itemType');
-		},
-		set: function(value) {
-			return this.setAttribute('itemType', value);
-		},
-	});
+			if (property instanceof jQuery) {
+				property = property.microdata();
+			}
 
-	// get/set the itemId of an element
-	Object.defineProperty(Element.prototype, 'itemId', {
-		get: function() {
-			return this.getAttribute('itemId');
-		},
-		set: function(value) {
-			return this.setAttribute('itemId', value);
-		},
-	});
+			if (typeof data[name] == 'undefined') {
+				data[name] = [];
+			}
+
+			data[name].push(property);
+		});
+
+		return data;
+	};
 }(jQuery));

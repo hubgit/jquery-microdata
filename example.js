@@ -1,6 +1,23 @@
-/* display using Microdata DOM API */
+/* set a value */
 
-"use strict";
+$(function() {
+	var albums = $('#albumlist').items('http://schema.org/MusicAlbum');
+
+	albums.eq(0)
+		.microdata('byArtist')
+		.microdata('name', 'Jesu')
+		.microdata('url', 'https://en.wikipedia.org/wiki/Jesu');
+});
+
+/* convert to JSON */
+
+$(function() {
+	var albums = $('#albumlist').items('http://schema.org/MusicAlbum');
+	var code = $('<code/>', { text: JSON.stringify(albums.microdata(), null, 2) });
+	$('<pre/>').append(code).appendTo('body');
+});
+
+/* display in a table */
 
 $(function() {
 	var table = $('<table/>').appendTo('body');
@@ -11,43 +28,36 @@ $(function() {
 	$('<th/>', { text: 'album' }).appendTo(row);
 	$('<th/>', { text: 'artist' }).appendTo(row);
 
-	var albums = $('#albumlist').items('http://schema.org/MusicAlbum').map(function() {
-		/* album */
-		var album = this.properties;
+	$('#albumlist').items('http://schema.org/MusicAlbum').each(function() {
+		// album
+		var album = $(this);
 		var row = $('<tr/>').appendTo(tbody);
 
 		var cell = $('<td/>').appendTo(row);
-		$('<a/>', { href: album.url[0].itemValue, text: album.name[0].itemValue }).appendTo(cell);
+		$('<a/>', { href: album.microdata('url'), text: album.microdata('name') }).appendTo(cell);
 
-		/* artist */
-		var artist = album.byArtist[0].properties;
+		// group (artist)
+		var artist = album.microdata('byArtist');
 		var cell = $('<td/>').appendTo(row);
 
-		$('<a/>', { href: artist.url[0].itemValue, text: artist.name[0].itemValue }).appendTo(cell);
+		$('<a/>', { href: artist.microdata('url'), text: artist.microdata('name') }).appendTo(cell);
 
-		if (typeof artist.musicGroupMember !== 'undefined') {
-			var members = artist.musicGroupMember.map(function(item) {
-				return item.properties.name[0].itemValue;
-			});
+		// group's members
+		var members = $.map(artist.microdata('musicGroupMember', true), function(item) {
+			return item.microdata('name');
+		});
+
+		if (members.length) {
 			$('<div/>', { text: 'Members: ' + members.join(', ') }).appendTo(cell);
 		}
 
-		if (typeof artist.album !== 'undefined') {
-			var albums = artist.album.map(function(item) {
-				return item.properties.name[0].itemValue;
-			});
+		// group's albums
+		var albums = $.map(artist.microdata('album', true), function(item) {
+			return item.microdata('name');
+		});
+
+		if (albums.length) {
 			$('<div/>', { text: 'Albums: ' + albums.join(', ') }).appendTo(cell);
 		}
 	});
 });
-
-/* convert to JSON using schema */
-
-$(function() {
-	var albums = $('#albumlist').items('http://schema.org/MusicAlbum').map(function(index, node) {
-		return (new MusicAlbum(node)).serialize();
-	});
-
-	var code = $('<code/>', { text: JSON.stringify(albums.toArray(), null, 2) });
-	$('<pre/>').append(code).appendTo('body');
-})

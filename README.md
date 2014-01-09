@@ -1,17 +1,37 @@
-This plugin was an experiment in implementing the HTML Microdata DOM API.
+# jQuery Microdata
 
-You probably want to use [jQuery Things](https://github.com/hubgit/jquery-things) instead.
-    
-    $(document).getItems(itemtype)
-        => Node[]
-            .getProperties()
-                => Array[] HTMLPropertiesCollection
-                    .namedItem(name) or [name]
-                        => Node[] PropertyNodeList
-                            .itemValue
+Extract and manipulate objects stored in [HTML Microdata](http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html), using a simple interface.
 
+### Get all items of a certain type
 
+$(node).items(itemtype)
 
-    $(document).getItems('http://schema.org/MusicAlbum')[0].properties.namedItem('byArtist')[0].properties.namedItem('url')[0].itemValue;
-    $(document).getItems('http://schema.org/MusicAlbum')[0].properties['byArtist'][0].properties['url'][0].itemValue;
-    $(document).getItems('http://schema.org/MusicAlbum')[0].properties.byArtist[0].properties.url[0].itemValue;
+    $('#albumlist').items('http://schema.org/MusicAlbum')
+
+### Get a property
+
+$(node).microdata(property) => a literal value or a jQuery object
+
+    $(node).microdata('name') => string
+
+    $(node).microdata('byArtist') => jQuery object
+
+    $(node).microdata('byArtist').microdata('name') => string
+
+### Set a property
+
+$(node).microdata(property, value)
+
+	$(node).microdata('name', 'Yellow Submarine')
+
+	$(node).microdata('byArtist')
+	     .microdata('name', 'The Beatles')
+	     .microdata('url', 'https://en.wikipedia.org/wiki/The_Beatles')
+
+ ### Get a property as an array
+
+ $(node).microdata(property, true) => an array of literal values or jQuery objects
+
+     $(node).microdata('name', true) => [ string, string ]
+
+     $(node).microdata('byArtist').microdata('album', true) => [ jQuery object, jQuery object ]
