@@ -8,26 +8,26 @@ $(node).things(itemtype) => an array of Thing objects
 
 ### Get a property of a thing as a single item
 
-Thing.get(property) => a literal value or a Thing
+Thing.data(property) => a literal value or a Thing
 
-    thing.get('name') => string
+    thing.data('name') => string
 
-    thing.get('byArtist') => Thing
+    thing.data('byArtist') => Thing
 
-    thing.get('byArtist').get('name') => string
+    thing.data('byArtist').data('name') => string
 
 ### Get a property of a thing as an array of items
 
-Thing.get(property+) => an array of literal values or Things
+Thing.data(property+) => an array of literal values or Things
 
-    thing.get('name+') => [string]
+    thing.data('name+') => [string]
 
-    thing.get('byArtist').get('album+') => [Thing, Thing, Thing]
+    thing.data('byArtist').data('album+') => [Thing, Thing, Thing]
 
 ### Set a property of a thing
 
-Thing.set(property)
+Thing.data(property)
 
-	thing.get('byArtist')
-	     .set('name', 'The Beatles')
-	     .set('url', 'https://en.wikipedia.org/wiki/The_Beatles')
+	thing.data('byArtist')
+	     .data('name', 'The Beatles')
+	     .data('url', 'https://en.wikipedia.org/wiki/The_Beatles')

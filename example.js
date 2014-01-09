@@ -2,7 +2,7 @@
 
 $(function() {
 	var albums = $('#albumlist').things('http://schema.org/MusicAlbum');
-	albums[0].get('byArtist').set('name', 'Jesu').set('url', 'https://en.wikipedia.org/wiki/Jesu')
+	albums[0].data('byArtist').data('name', 'Jesu').data('url', 'https://en.wikipedia.org/wiki/Jesu')
 });
 
 /* convert to JSON */
@@ -32,17 +32,17 @@ $(function() {
 		var row = $('<tr/>').appendTo(tbody);
 
 		var cell = $('<td/>').appendTo(row);
-		$('<a/>', { href: album.get('url'), text: album.get('name') }).appendTo(cell);
+		$('<a/>', { href: album.data('url'), text: album.data('name') }).appendTo(cell);
 
 		// group (artist)
-		var artist = album.get('byArtist');
+		var artist = album.data('byArtist');
 		var cell = $('<td/>').appendTo(row);
 
-		$('<a/>', { href: artist.get('url'), text: artist.get('name') }).appendTo(cell);
+		$('<a/>', { href: artist.data('url'), text: artist.data('name') }).appendTo(cell);
 
 		// group's members
-		var members = $.map(artist.get('musicGroupMember+'), function(item) {
-			return item.get('name');
+		var members = $.map(artist.data('musicGroupMember+'), function(item) {
+			return item.data('name');
 		});
 
 		if (members.length) {
@@ -50,8 +50,8 @@ $(function() {
 		}
 
 		// group's albums
-		var albums = $.map(artist.get('album+'), function(item) {
-			return item.get('name');
+		var albums = $.map(artist.data('album+'), function(item) {
+			return item.data('name');
 		});
 
 		if (albums.length) {
