@@ -15,4 +15,3 @@ You probably want to use [jQuery Things](https://github.com/hubgit/jquery-things
     $(document).getItems('http://schema.org/MusicAlbum')[0].properties.namedItem('byArtist')[0].properties.namedItem('url')[0].itemValue;
     $(document).getItems('http://schema.org/MusicAlbum')[0].properties['byArtist'][0].properties['url'][0].itemValue;
     $(document).getItems('http://schema.org/MusicAlbum')[0].properties.byArtist[0].properties.url[0].itemValue;
-    $(document).getItems('http://schema.org/MusicAlbum')[0].properties.byArtist.properties.url.itemValue;
