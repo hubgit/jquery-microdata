@@ -17,15 +17,18 @@
 	};
 
 	$.fn.itemType = function() {
-		return String(this.attr('itemType')).split(/\s+/);
+		var text = this.attr('itemType');
+		return text ? text.split(/\s+/) : [];
 	};
 
 	$.fn.itemProp = function() {
-		return String(this.attr('itemProp')).split(/\s+/);
+		var text = this.attr('itemProp');
+		return text ? text.split(/\s+/) : [];
 	};
 
 	$.fn.itemRef = function() {
-		return String(this.attr('itemRef')).split(/\s+/);
+		var text = this.attr('itemRef');
+		return text ? text.split(/\s+/) : [];
 	};
 
 	// get or set the itemValue of a node
@@ -87,7 +90,7 @@
 	// TOOD: cache this on the node
 	$.fn.propertyList = function() {
 		var refs = $.map(this.itemRef(), function(ref) {
-			return $('#' + ref);
+			return document.getElementById(ref);
 		});
 
 		var nodes = $.merge($(refs), this);
@@ -105,17 +108,17 @@
 
 	// all nodes with a certain property name
 	$.fn.propertyNodes = function(name) {
-		return this.propertyList().filter(function() {
-			return this[0] == name;
-		}).map(function() {
-			return this[1];
+		return $.grep(this.propertyList(), function(item) {
+			return item[0] == name;
+		}).map(function(item) {
+			return item[1];
 		});
 	};
 
 	// all values with a certain property name
 	$.fn.propertyValues = function(name) {
-		return this.propertyNodes(name).map(function() {
-			return this.itemValue();
+		return $.map(this.propertyNodes(name), function(item) {
+			return item.itemValue();
 		});
 	};
 
@@ -136,7 +139,7 @@
 
 			// set the value of a single node or multiple nodes by name
 			if (typeof value !== 'undefined') {
-				this.propertyNodes(name).each(function() {
+				$.each(this.propertyNodes(name), function() {
 					$(this).itemValue(value);
 				});
 
@@ -152,7 +155,7 @@
 			type: this.itemType()
 		};
 
-		this.propertyList().each(function() {
+		$.each(this.propertyList(), function() {
 			var name = this[0];
 			var property = this[1].itemValue();
 
