@@ -8,11 +8,13 @@ $(function() {
 /* convert to JSON */
 
 $(function() {
-	var albums = $('#albumlist').things('http://schema.org/MusicAlbum').map(function() {
+	var albums = $('#albumlist').things('http://schema.org/MusicAlbum');
+	
+	var data = albums.map(function() {
 		return this.data();
-	});
+	}).toArray();
 
-	var code = $('<code/>', { text: JSON.stringify(albums.toArray(), null, 2) });
+	var code = $('<code/>', { text: JSON.stringify(data, null, 2) });
 	$('<pre/>').append(code).appendTo('body');
 });
 
