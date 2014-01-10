@@ -11,23 +11,34 @@
  (function($) {
 	// get all items of a certain type
 	$.fn.things = function(itemtype) {
-		return this.find('[itemscope]')
-			.filter(function() {
-				return this.getAttribute('itemtype') == itemtype;
-			})
-			.map(function() {
-				return new Thing(this);
-			});
+		return this.find('[itemscope]').filter(function() {
+			return $(this).itemType().indexOf(itemtype) !== -1;
+		});
+	};
+
+	$.fn.itemType = function() {
+		var text = this.attr('itemType');
+		return text ? text.split(/\s+/) : [];
+	};
+
+	$.fn.itemProp = function() {
+		var text = this.attr('itemProp');
+		return text ? text.split(/\s+/) : [];
+	};
+
+	$.fn.itemRef = function() {
+		var text = this.attr('itemRef');
+		return text ? text.split(/\s+/) : [];
 	};
 
 	// get or set the itemValue of a node
-	$.fn.value = function(value) {
+	$.fn.itemValue = function(value) {
 		if (this.is('[itemscope]')) {
 			if (typeof value != 'undefined') {
 				throw 'Not allowed to set the value of an itemscope node';
 			}
 
-			return new Thing(this);
+			return this;
 		}
 
 		switch (this.get(0).nodeName) {
@@ -75,103 +86,90 @@
 		}
 	};
 
-	$.fn.attrs = function(attribute) {
-		var text = this.attr(attribute);
-
-		if (!text) {
-			return [];
-		}
-
-		return $.grep(text.split(/\s+/), function(item) {
-			return item;
-		});
-	}
-
-	/* Thing */
-
-	var Thing = function(node) {
-		this.node = $(node);
-		this.propertyList = this.properties();
-	};
-
 	// build an array of [name, node] property pairs
-	Thing.prototype.properties = function() {
-		var refs = $.map(this.node.attrs('itemref'), function(ref) {
+	// TOOD: cache this on the node
+	$.fn.propertyList = function() {
+		var refs = $.map(this.itemRef(), function(ref) {
 			return document.getElementById(ref);
 		});
 
-		var nodes = $.merge($(refs), this.node);
+		var nodes = $.merge($(refs), this);
 
 		return nodes.find('[itemprop]')
 			.not(nodes.find('[itemscope] [itemprop]'))
 			.map(function() {
 				var node = $(this);
 
-				return $.map(node.attrs('itemprop'), function(propertyName) {
+				return $.map(node.itemProp(), function(propertyName) {
 					return [[propertyName, node]];
 				});
 			});
 	};
 
 	// all nodes with a certain property name
-	Thing.prototype.nodes = function(name) {
-		return this.propertyList
-			.filter(function() {
-				return this[0] == name;
-			})
-			.map(function() {
-				return this[1];
-			});
-	}
-
-	// get the value of a single node or multiple nodes by name
-	Thing.prototype.get = function(name, plural) {
-		var properties = this.nodes(name).map(function() {
-			return this.value();
+	$.fn.propertyNodes = function(name) {
+		var items = $.grep(this.propertyList(), function(item) {
+			return item[0] == name;
 		});
 
-		return plural ? properties.toArray() : properties[0];
-	};
-
-	// set the value of a single node or multiple nodes by name
-	Thing.prototype.set = function(name, value) {
-		this.nodes(name).each(function() {
-			$(this).value(value);
+		return $.map(items, function(item) {
+			return item[1];
 		});
-
-		return this;
 	};
 
+	// all values with a certain property name
+	$.fn.propertyValues = function(name) {
+		return $.map(this.propertyNodes(name), function(item) {
+			return item.itemValue();
+		});
+	};
 
 	// properties as a data object
-	Thing.prototype.data = function(name, value) {
-		if (typeof value !== 'undefined' && typeof value !== 'boolean') {
-			return this.set(name, value);
-		}
-
-		if (typeof name !== 'undefined') {
-			return this.get(name, value);
-		}
-
-		var data = {
-			type: this.node.attr('itemtype'),
+	$.fn.microdata = function(name, value) {
+		if (this.length > 1) {
+			return this.map(function() {
+				return $(this).microdata();
+			}).toArray();
 		};
 
-		this.propertyList.each(function() {
-			var name = this[0];
-			var property = this[1].value();
+		// get/set a specific property
+		if (typeof name !== 'undefined') {
+			// get the value of multiple nodes by name
+			if (typeof value === 'boolean') {
+				return this.propertyValues(name);
+			}
 
-			if (property instanceof Thing) {
-				property = property.data();
+			// set the value of a single node or multiple nodes by name
+			if (typeof value !== 'undefined') {
+				$.each(this.propertyNodes(name), function() {
+					$(this).itemValue(value);
+				});
+
+				return this;
+			}
+
+			// get the value of a single node
+			return this.propertyValues(name)[0];
+		}
+
+		// the object always includes an itemtype
+		var data = {
+			type: this.itemType()
+		};
+
+		$.each(this.propertyList(), function() {
+			var name = this[0];
+			var property = this[1].itemValue();
+
+			if (property instanceof jQuery) {
+				property = property.microdata();
 			}
 
 			if (typeof data[name] == 'undefined') {
-				data[name] = property; // first item (literal)
-			} else if ($.isArray(data[name])) {
-				data[name].push(property); // more items (array)
-			} else {
-				data[name] = [data[name], property]; // second item (array)
+				data[name] = [];
 			}
+
+			data[name].push(property);
 		});
 
 		return data;

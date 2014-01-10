@@ -2,19 +2,18 @@
 
 $(function() {
 	var albums = $('#albumlist').things('http://schema.org/MusicAlbum');
-	albums[0].data('byArtist').data('name', 'Jesu').data('url', 'https://en.wikipedia.org/wiki/Jesu')
+
+	albums.eq(0)
+		.microdata('byArtist')
+		.microdata('name', 'Jesu')
+		.microdata('url', 'https://en.wikipedia.org/wiki/Jesu');
 });
 
 /* convert to JSON */
 
 $(function() {
 	var albums = $('#albumlist').things('http://schema.org/MusicAlbum');
-	
-	var data = albums.map(function() {
-		return this.data();
-	}).toArray();
-
-	var code = $('<code/>', { text: JSON.stringify(data, null, 2) });
+	var code = $('<code/>', { text: JSON.stringify(albums.microdata(), null, 2) });
 	$('<pre/>').append(code).appendTo('body');
 });
 
@@ -29,22 +28,23 @@ $(function() {
 	$('<th/>', { text: 'album' }).appendTo(row);
 	$('<th/>', { text: 'artist' }).appendTo(row);
 
-	$('#albumlist').things('http://schema.org/MusicAlbum').map(function(index, album) {
+	$('#albumlist').things('http://schema.org/MusicAlbum').each(function() {
 		// album
+		var album = $(this);
 		var row = $('<tr/>').appendTo(tbody);
 
 		var cell = $('<td/>').appendTo(row);
-		$('<a/>', { href: album.data('url'), text: album.data('name') }).appendTo(cell);
+		$('<a/>', { href: album.microdata('url'), text: album.microdata('name') }).appendTo(cell);
 
 		// group (artist)
-		var artist = album.data('byArtist');
+		var artist = album.microdata('byArtist');
 		var cell = $('<td/>').appendTo(row);
 
-		$('<a/>', { href: artist.data('url'), text: artist.data('name') }).appendTo(cell);
+		$('<a/>', { href: artist.microdata('url'), text: artist.microdata('name') }).appendTo(cell);
 
 		// group's members
-		var members = $.map(artist.data('musicGroupMember', true), function(item) {
-			return item.data('name');
+		var members = $.map(artist.microdata('musicGroupMember', true), function(item) {
+			return item.microdata('name');
 		});
 
 		if (members.length) {
@@ -52,8 +52,8 @@ $(function() {
 		}
 
 		// group's albums
-		var albums = $.map(artist.data('album', true), function(item) {
-			return item.data('name');
+		var albums = $.map(artist.microdata('album', true), function(item) {
+			return item.microdata('name');
 		});
 
 		if (albums.length) {

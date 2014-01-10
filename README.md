@@ -1,35 +1,45 @@
 # jQuery Things
 
-Extract and manipulate objects stored in [HTML Microdata](http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html), using a simple API.
+Extract and manipulate objects stored in [HTML Microdata](http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html), using a simple interface.
 
-### Get all the things of a certain type
+[Demonstration](http://git.macropus.org/jquery-things/)
 
-$(node).things(itemtype) => an array of Thing objects
+### Get all things of a certain type
 
-    $('#albumlist').things('http://schema.org/MusicAlbum') => [Thing, Thing, Thing]
+$(node).things(itemtype)
 
-### Get a property of a thing as a single item
+    $('#albumlist').things('http://schema.org/MusicAlbum')
 
-Thing.data(property) => a literal value or a Thing
+### Get a property
 
-    thing.data('name') => string
+$(node).microdata(property) => a literal value or a jQuery object
 
-    thing.data('byArtist') => Thing
+    $(node).microdata('name') => string
 
-    thing.data('byArtist').data('name') => string
+    $(node).microdata('byArtist') => jQuery object
 
-### Get a property of a thing as an array of items
+    $(node).microdata('byArtist').microdata('name') => string
 
-Thing.data(property, true) => an array of literal values or Things
+### Set a property
 
-    thing.data('name', true) => [string]
+$(node).microdata(property, value)
 
-    thing.data('byArtist').data('album', true) => [Thing, Thing, Thing]
+	$(node).microdata('name', 'Yellow Submarine')
 
-### Set a property of a thing
+	$(node).microdata('byArtist')
+	       .microdata('name', 'The Beatles')
+	       .microdata('url', 'https://en.wikipedia.org/wiki/The_Beatles')
 
-Thing.data(property, value)
+### Get a property as an array
 
-	thing.data('byArtist')
-	     .data('name', 'The Beatles')
-	     .data('url', 'https://en.wikipedia.org/wiki/The_Beatles')
+$(node).microdata(property, true) => an array of literal values or jQuery objects
+
+    $(node).microdata('name', true) => [ string, string ]
+
+    $(node).microdata('byArtist').microdata('album', true) => [ jQuery object, jQuery object ]
+
+### Get all properties
+
+$(node).microdata()
+
+    $('#albumlist').things('http://schema.org/MusicAlbum').microdata()
