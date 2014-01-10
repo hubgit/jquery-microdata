@@ -87,15 +87,19 @@
 	};
 
 	// build an array of [name, node] property pairs
-	// TOOD: cache this on the node
 	$.fn.propertyList = function() {
+		// cache the property list (TODO: watch for changes)
+		if (typeof this.propertyListCache !== 'undefined') {
+			return this.propertyListCache;
+		}
+
 		var refs = $.map(this.itemRef(), function(ref) {
 			return document.getElementById(ref);
 		});
 
 		var nodes = $.merge($(refs), this);
 
-		return nodes.find('[itemprop]')
+		return this.propertyListCache = nodes.find('[itemprop]')
 			.not(nodes.find('[itemscope] [itemprop]'))
 			.map(function() {
 				var node = $(this);
