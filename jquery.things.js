@@ -1,12 +1,12 @@
 /*
- * jQuery Things v1.0
+ * jQuery Things v1.1
  * https://github.com/hubgit/jquery-things
  *
  * Copyright 2014 Alf Eaton
  * Released under the MIT license
  * http://git.macropus.org/mit-license/
  *
- * Date: 2014-01-09
+ * Date: 2014-01-12
  */
  (function($) {
 	// get all items of a certain type
