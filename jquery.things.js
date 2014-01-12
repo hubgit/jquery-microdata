@@ -10,7 +10,7 @@
  */
  (function($) {
 	// get all items of a certain type
-	$.fn.things = function(itemtype) {
+	$.fn.items = $.fn.things = function(itemtype) {
 		return this.find('[itemscope]').filter(function() {
 			return $(this).itemType().indexOf(itemtype) !== -1;
 		});
@@ -27,12 +27,13 @@
 	};
 
 	$.fn.itemRef = function() {
+		console.log(this);
 		var text = this.attr('itemRef');
 		return text ? text.split(/\s+/) : [];
 	};
 
 	// get or set the itemValue of a node
-	$.fn.itemValue = function(value) {
+	$.fn.itemValue = $.fn.value = function(value) {
 		if (this.is('[itemscope]')) {
 			if (typeof value != 'undefined') {
 				throw 'Not allowed to set the value of an itemscope node';
@@ -86,6 +87,14 @@
 		}
 	};
 
+	$.fn.value = function(value) {
+		var values = this.map(function() {
+			return this.itemValue(value);
+		});
+
+		return $.isArray(values) ? values.join(' ') : values[0];
+	}
+
 	// build an array of [name, node] property pairs
 	$.fn.propertyList = function() {
 		// cache the property list (TODO: watch for changes)
@@ -111,18 +120,21 @@
 	};
 
 	// all nodes with a certain property name
-	$.fn.propertyNodes = function(name) {
+	$.fn.propertyNodes = $.fn.property = function(name) {
+		console.log(name);
 		var items = $.grep(this.propertyList(), function(item) {
 			return item[0] == name;
 		});
 
-		return $.map(items, function(item) {
+		var nodes = $.map(items, function(item) {
 			return item[1];
 		});
+
+		return $(nodes);
 	};
 
 	// all values with a certain property name
-	$.fn.propertyValues = function(name) {
+	$.fn.propertyValues = $.fn.properties = function(name) {
 		return $.map(this.propertyNodes(name), function(item) {
 			return item.itemValue();
 		});
@@ -138,8 +150,14 @@
 
 		// get/set a specific property
 		if (typeof name !== 'undefined') {
+			var plural = name.match(/\+$/);
+
+			if (plural) {
+				name = name.replace(/\+$/, '');
+			}
+
 			// get the value of multiple nodes by name
-			if (typeof value === 'boolean') {
+			if (plural) {
 				return this.propertyValues(name);
 			}
 
