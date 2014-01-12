@@ -27,7 +27,6 @@
 	};
 
 	$.fn.itemRef = function() {
-		console.log(this);
 		var text = this.attr('itemRef');
 		return text ? text.split(/\s+/) : [];
 	};
@@ -121,7 +120,6 @@
 
 	// all nodes with a certain property name
 	$.fn.propertyNodes = $.fn.property = function(name) {
-		console.log(name);
 		var items = $.grep(this.propertyList(), function(item) {
 			return item[0] == name;
 		});
