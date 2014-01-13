@@ -44,7 +44,22 @@
 
 			// set a single value
 			default:
-				itemValue.call(this, value);
+				switch (arguments.length) {
+					case 1:
+						if (this.is('[itemscope]')) {
+							// get a single property
+							return this.property(value).value();
+						} else {
+							// set a single property
+							itemValue.call(this, value);
+						}
+						break;
+
+					case 2:
+						// arguments = [name, value]
+						this.property(value).value(arguments[1]);
+						break;
+				}
 
 				return this;
 		}
