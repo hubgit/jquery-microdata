@@ -41,7 +41,7 @@ $(function() {
 			var artist = $(this);
 
 			$('<a/>', {
-				href: artist.property('url').value(),
+				href: artist.value('url'),
 				text: artist.property('name').values().join(' / ')
 			}).appendTo(cell).wrap('<div/>');
 

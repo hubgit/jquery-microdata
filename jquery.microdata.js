@@ -25,44 +25,42 @@
 
 	// get/set the value of matched elements
 	$.fn.value = function(value) {
+		// convenience method for getting/single single property values of an item
+		if (this.is('[itemscope]')) {
+			switch (typeof value) {
+				// get/set a single property
+				case 'string':
+					if (arguments.length === 1) {
+						// get a single property
+						return this.property(value).value();
+					}
+
+					this.property(value).value(arguments[1]);
+
+					return this;
+
+				// set the value of multiple properties
+				case 'object':
+					var nodes = this;
+
+					$.each(value, function(name, value) {
+						nodes.property(name).value(value);
+					});
+
+					return this;
+
+				case 'undefined':
+					return this.microdata();
+			}
+		}
+
 		// get value
 		if (typeof value === 'undefined') {
 			return itemValue.call(this);
 		}
 
-		// set value
-		switch (typeof value) {
-			// set the value of multiple properties
-			case 'object':
-				var nodes = this;
-
-				$.each(value, function(name, value) {
-					nodes.property(name).value(value);
-				});
-
-				return this;
-
-			// set a single value
-			default:
-				switch (arguments.length) {
-					case 1:
-						if (this.is('[itemscope]')) {
-							// get a single property
-							return this.property(value).value();
-						} else {
-							// set a single property
-							itemValue.call(this, value);
-						}
-						break;
-
-					case 2:
-						// arguments = [name, value]
-						this.property(value).value(arguments[1]);
-						break;
-				}
-
-				return this;
-		}
+		// set a single value
+		itemValue.call(this, value);
 	};
 
 	// get all values of a property as an array
@@ -73,21 +71,7 @@
 	};
 
 	// get all properties as a key/value(s) object
-	$.fn.microdata = function(collapsed, value) {
-		if (typeof collapsed == 'string') {
-			var name = collapsed;
-
-			// get a property value
-			if (typeof value == 'undefined') {
-				return this.property(name).value();
-			}
-
-			// set a property value
-			this.property(name).value(value);
-
-			return this;
-		}
-
+	$.fn.microdata = function(collapsed) {
 		if (this.length > 1) {
 			return this.map(function() {
 				return $(this).microdata(collapsed);
