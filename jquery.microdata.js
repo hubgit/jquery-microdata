@@ -58,7 +58,21 @@
 	};
 
 	// get all properties as a key/value(s) object
-	$.fn.microdata = function(collapsed) {
+	$.fn.microdata = function(collapsed, value) {
+		if (typeof collapsed == 'string') {
+			var name = collapsed;
+
+			// get a property value
+			if (typeof value == 'undefined') {
+				return this.property(name).value();
+			}
+
+			// set a property value
+			this.property(name).value(value);
+
+			return this;
+		}
+
 		if (this.length > 1) {
 			return this.map(function() {
 				return $(this).microdata(collapsed);

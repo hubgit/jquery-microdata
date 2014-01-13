@@ -4,7 +4,7 @@ $(function() {
 	var albums = $('#albumlist').items('http://schema.org/MusicAlbum');
 	var artists = albums.eq(0).property('byArtist');
 
-	artists.eq(0).property('name').value('Jesu');
+	artists.eq(0).microdata('name', 'Jesu');
 
 	artists.eq(1).value({
 		name: 'Jesu Two',
@@ -31,7 +31,7 @@ $(function() {
 		var cell = $('<td/>').appendTo(row);
 		$('<a/>', {
 			href: album.property('url').value(),
-			text: album.property('name').value()
+			text: album.microdata('name')
 		}).appendTo(cell);
 
 		var cell = $('<td/>').appendTo(row);
