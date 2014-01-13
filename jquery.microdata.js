@@ -25,7 +25,7 @@
 
 	// get/set the value of matched elements
 	$.fn.value = function(value) {
-		// convenience method for getting/single single property values of an item
+		// convenience method for getting/setting single property values of an item
 		if (this.is('[itemscope]')) {
 			switch (typeof value) {
 				// get/set a single property
