@@ -35,6 +35,7 @@
 						return this.property(value).value();
 					}
 
+					// set a single property
 					this.property(value).value(arguments[1]);
 
 					return this;
@@ -48,9 +49,6 @@
 					});
 
 					return this;
-
-				case 'undefined':
-					return this.microdata();
 			}
 		}
 
@@ -64,53 +62,12 @@
 	};
 
 	// get all values of a property as an array
-	$.fn.values = function() {
+	$.fn.values = function(expanded) {
 		return this.map(function() {
-			return itemValue.call($(this));
-		}).get();
-	};
-
-	// get all properties as a key/value(s) object
-	$.fn.microdata = function(collapsed) {
-		if (this.length > 1) {
-			return this.map(function() {
-				return $(this).microdata(collapsed);
-			}).toArray();
-		};
-
-		// the object always includes an itemtype
-		var data = {
-			type: collapsed ? attrs.call(this, 'itemType').get(0) : attrs.call(this, 'itemType').get()
-		};
-
-		propertyNodes.apply(this).map(function() {
 			var node = $(this);
-			var property = node.value();
 
-			if (property instanceof jQuery) {
-				property = property.microdata(collapsed);
-			}
-
-			attrs.call(this, 'itemProp').each(function(index, name) {
-				if (collapsed) {
-					if (typeof data[name] == 'undefined') {
-						data[name] = property; // first item
-					} else if ($.isArray(data[name])) {
-						data[name].push(property); // more items
-					} else {
-						data[name] = [data[name], property];
-					}
-				} else {
-					if (typeof data[name] == 'undefined') {
-						data[name] = [];
-					}
-
-					data[name].push(property);
-				}
-			});
-		});
-
-		return data;
+			return node.is('[itemscope]') ? microdata.call(node, expanded) : itemValue.call(node);
+		}).get();
 	};
 
 	// all property nodes, including those in referenced nodes
@@ -188,5 +145,48 @@
 
 			return this.text(value);
 		}
+	};
+
+	// get all properties as a key/value(s) object
+	var microdata = function(expanded) {
+		if (this.length > 1) {
+			return this.map(function() {
+				return microdata.call($(this), expanded);
+			}).get();
+		};
+
+		// the object always includes an itemtype
+		var data = {
+			type: expanded ? attrs.call(this, 'itemType').get() : attrs.call(this, 'itemType').get(0)
+		};
+
+		propertyNodes.apply(this).map(function() {
+			var node = $(this);
+			var property = node.value();
+
+			if (property instanceof jQuery) {
+				property = microdata.call(property, expanded);
+			}
+
+			attrs.call(this, 'itemProp').each(function(index, name) {
+				if (expanded) {
+					if (typeof data[name] == 'undefined') {
+						data[name] = [];
+					}
+
+					data[name].push(property);
+				} else {
+					if (typeof data[name] == 'undefined') {
+						data[name] = property; // first item
+					} else if ($.isArray(data[name])) {
+						data[name].push(property); // more items
+					} else {
+						data[name] = [data[name], property];
+					}
+				}
+			});
+		});
+
+		return data;
 	};
 }(jQuery));

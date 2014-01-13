@@ -53,9 +53,9 @@ $(node).value({ key: value })
         url: 'https://en.wikipedia.org/wiki/The_Beatles'
     });
 
-### Get all properties
+### Get all properties of
 
-$(node).microdata()
+$(node).values()
 
-    $('#albumlist').items('http://schema.org/MusicAlbum').microdata()
+    $('#albumlist').items('http://schema.org/MusicAlbum').values()
 

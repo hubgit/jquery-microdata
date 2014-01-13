@@ -72,20 +72,20 @@ $(function() {
 	var albums = $('#albumlist').items('http://schema.org/MusicAlbum');
 
 	var code = $('<code/>', {
-		text: JSON.stringify(albums.microdata(), null, 2)
+		text: JSON.stringify(albums.values(false), null, 2)
 	});
 
 	$('#microdata').append(code);
 });
 
-/* convert to collapsed JSON */
+/* convert to expanded JSON */
 
 $(function() {
 	var albums = $('#albumlist').items('http://schema.org/MusicAlbum');
 
 	var code = $('<code/>', {
-		text: JSON.stringify(albums.microdata(true), null, 2)
+		text: JSON.stringify(albums.values(true), null, 2)
 	});
 
-	$('#microdata-collapsed').append(code);
+	$('#microdata-expanded').append(code);
 });
