@@ -139,11 +139,7 @@
 			return getting ? node.data : this.attr('data', value);
 
 			default:
-			if (getting) {
-				return $.trim(this.text());
-			}
-
-			return this.text(value);
+			return getting ? $.trim(this.text()) : this.text(value);
 		}
 	};
 
