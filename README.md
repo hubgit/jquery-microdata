@@ -28,7 +28,7 @@ $(node).value() => the itemValue of the node(s)
 
 ### Get the values of a property as an array
 
-$(node).values() => the itemValue of the node(s)
+$(node).values() => array of the itemValues of the nodes
 
     $(node).property('name').values() => [ string, string ]
 
