@@ -1,58 +1,149 @@
 /*
- * jQuery Microdata v1.0
+ * jQuery Microdata v1.3
  * https://github.com/hubgit/jquery-microdata
  *
  * Copyright 2014 Alf Eaton
  * Released under the MIT license
  * http://git.macropus.org/mit-license/
  *
- * Date: 2014-01-09
+ * Date: 2014-01-13
  */
  (function($) {
 	// get all items of a certain type
 	$.fn.items = function(itemtype) {
 		return this.find('[itemscope]').filter(function() {
-			return $(this).itemType().indexOf(itemtype) !== -1;
+			return attrs.call(this, 'itemType').get().indexOf(itemtype) !== -1;
 		});
 	};
 
-	$.fn.itemType = function() {
-		var text = this.attr('itemType');
-		return text ? text.split(/\s+/) : [];
+	// all nodes with a certain property name
+	$.fn.property = function(name) {
+		return propertyNodes.apply(this).filter(function(item) {
+			return attrs.call(this, 'itemProp').get().indexOf(name) !== -1;
+		});
 	};
 
-	$.fn.itemProp = function() {
-		var text = this.attr('itemProp');
-		return text ? text.split(/\s+/) : [];
+	// get/set the value of matched elements
+	$.fn.value = function(value) {
+		// get value
+		if (typeof value === 'undefined') {
+			return itemValue.call(this);
+		}
+
+		// set value
+		switch (typeof value) {
+			// set the value of multiple properties
+			case 'object':
+				var nodes = this;
+
+				$.each(value, function(name, value) {
+					nodes.property(name).value(value);
+				});
+
+				return this;
+
+			// set a single value
+			default:
+				itemValue.call(this, value);
+
+				return this;
+		}
 	};
 
-	$.fn.itemRef = function() {
-		var text = this.attr('itemRef');
-		return text ? text.split(/\s+/) : [];
+	// get all values of a property as an array
+	$.fn.values = function() {
+		return this.map(function() {
+			return itemValue.call($(this));
+		}).get();
 	};
 
-	// get or set the itemValue of a node
-	$.fn.itemValue = function(value) {
+	// get all properties as a key/value(s) object
+	$.fn.microdata = function(collapsed) {
+		if (this.length > 1) {
+			return this.map(function() {
+				return $(this).microdata(collapsed);
+			}).toArray();
+		};
+
+		// the object always includes an itemtype
+		var data = {
+			type: collapsed ? attrs.call(this, 'itemType').get(0) : attrs.call(this, 'itemType').get()
+		};
+
+		propertyNodes.apply(this).map(function() {
+			var node = $(this);
+			var property = node.value();
+
+			if (property instanceof jQuery) {
+				property = property.microdata(collapsed);
+			}
+
+			attrs.call(this, 'itemProp').each(function(index, name) {
+				if (collapsed) {
+					if (typeof data[name] == 'undefined') {
+						data[name] = property; // first item
+					} else if ($.isArray(data[name])) {
+						data[name].push(property); // more items
+					} else {
+						data[name] = [data[name], property];
+					}
+				} else {
+					if (typeof data[name] == 'undefined') {
+						data[name] = [];
+					}
+
+					data[name].push(property);
+				}
+			});
+		});
+
+		return data;
+	};
+
+	// all property nodes, including those in referenced nodes
+	var propertyNodes = function() {
+		var refs = attrs.call(this, 'itemRef').map(function() {
+			return document.getElementById(this);
+		});
+
+		var nodes = $.merge($(refs), this);
+
+		return nodes.find('[itemprop]').not(nodes.find('[itemscope] [itemprop]'));
+	};
+
+	// get a space-separated attribute as an array
+	var attrs = function(attribute) {
+		return $(this).map(function() {
+			return (this.getAttribute(attribute) || '').split(/\s+/);
+		});
+	};
+
+	// get or set the value of a node
+	var itemValue = function(value) {
+		var getting = value == null;
+
 		if (this.is('[itemscope]')) {
-			if (typeof value != 'undefined') {
+			if (!getting) {
 				throw 'Not allowed to set the value of an itemscope node';
 			}
 
 			return this;
 		}
 
-		switch (this.get(0).nodeName) {
+		var node = this.get(0);
+
+		switch (node.nodeName) {
 			case 'META':
-			return typeof value == 'undefined' ? $.trim(this.attr('content')) : this.attr('content', value);
+			return getting ? $.trim(this.attr('content')) : this.attr('content', value);
 
 			case 'DATA':
-			return typeof value == 'undefined' ? $.trim(this.attr('value')) : this.attr('value', value);
+			return getting ? $.trim(this.attr('value')) : this.attr('value', value);
 
 			case 'METER':
-			return typeof value == 'undefined' ? $.trim(this.attr('value')) : this.attr('value', value);
+			return getting ? $.trim(this.attr('value')) : this.attr('value', value);
 
 			case 'TIME':
-			if (typeof value == 'undefined') {
+			if (getting) {
 				if (this.attr('datetime')) {
 					return $.trim(this.attr('datetime'));
 				}
@@ -67,111 +158,22 @@
 			case 'IMG':
 			case 'SOURCE':
 			case 'TRACK':
-			return typeof value == 'undefined' ? this.get(0).src : this.attr('src', value);
+			return getting ? node.src : this.attr('src', value);
 
 			case 'A':
 			case 'AREA':
 			case 'LINK':
-			return typeof value == 'undefined' ? this.get(0).href : this.attr('href', value);
+			return getting ? node.href : this.attr('href', value);
 
 			case 'OBJECT':
-			return typeof value == 'undefined' ? this.get(0).data : this.attr('data', value);
+			return getting ? node.data : this.attr('data', value);
 
 			default:
-			if (typeof value == 'undefined') {
+			if (getting) {
 				return $.trim(this.text());
 			}
 
 			return this.text(value);
 		}
-	};
-
-	// build an array of [name, node] property pairs
-	// TOOD: cache this on the node
-	$.fn.propertyList = function() {
-		var refs = $.map(this.itemRef(), function(ref) {
-			return document.getElementById(ref);
-		});
-
-		var nodes = $.merge($(refs), this);
-
-		return nodes.find('[itemprop]')
-			.not(nodes.find('[itemscope] [itemprop]'))
-			.map(function() {
-				var node = $(this);
-
-				return $.map(node.itemProp(), function(propertyName) {
-					return [[propertyName, node]];
-				});
-			});
-	};
-
-	// all nodes with a certain property name
-	$.fn.propertyNodes = function(name) {
-		var items = $.grep(this.propertyList(), function(item) {
-			return item[0] == name;
-		});
-
-		return $.map(items, function(item) {
-			return item[1];
-		});
-	};
-
-	// all values with a certain property name
-	$.fn.propertyValues = function(name) {
-		return $.map(this.propertyNodes(name), function(item) {
-			return item.itemValue();
-		});
-	};
-
-	// properties as a data object
-	$.fn.microdata = function(name, value) {
-		if (this.length > 1) {
-			return this.map(function() {
-				return $(this).microdata();
-			}).toArray();
-		};
-
-		// get/set a specific property
-		if (typeof name !== 'undefined') {
-			// get the value of multiple nodes by name
-			if (typeof value === 'boolean') {
-				return this.propertyValues(name);
-			}
-
-			// set the value of a single node or multiple nodes by name
-			if (typeof value !== 'undefined') {
-				$.each(this.propertyNodes(name), function() {
-					$(this).itemValue(value);
-				});
-
-				return this;
-			}
-
-			// get the value of a single node
-			return this.propertyValues(name)[0];
-		}
-
-		// the object always includes an itemtype
-		var data = {
-			type: this.itemType()
-		};
-
-		$.each(this.propertyList(), function() {
-			var name = this[0];
-			var property = this[1].itemValue();
-
-			if (property instanceof jQuery) {
-				property = property.microdata();
-			}
-
-			if (typeof data[name] == 'undefined') {
-				data[name] = [];
-			}
-
-			data[name].push(property);
-		});
-
-		return data;
 	};
 }(jQuery));

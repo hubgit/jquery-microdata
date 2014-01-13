@@ -3,49 +3,51 @@
 <title>jQuery Microdata Example</title>
 
 <script src="jquery.js"></script>
-<script src="jquery.microdata.js"></script>
-<script src="example.js"></script>
+<script src="../jquery.microdata.js"></script>
+<script src="demo.js"></script>
 
 <style>
+  body { font-family: sans-serif; }
   table { border-collapse: collapse; border: 1px solid #777; margin: 5px 0; }
   th { text-align: left; }
   th, td { vertical-align: top; padding: 2px 5px; }
 </style>
 
+<h1>jQuery Microdata demonstration</h1>
+
+<h2>HTML</h2>
+
 <ol id="albumlist">
   <li itemscope itemtype="http://schema.org/MusicAlbum">
     <span itemprop="byArtist" itemscope itemtype="http://schema.org/MusicGroup">
       <a itemprop="url" href="spotify:search:artist:Jesu">
-        <span itemprop="name">Jessu</span>
-      </a>
-    </span>
+        <span itemprop="name">Jessu</span></a></span>
+    and
+    <span itemprop="byArtist" itemscope itemtype="http://schema.org/MusicGroup">
+      <a itemprop="url" href="spotify:search:artist:Jesu">
+        <span itemprop="name">Jessu</span></a></span>
     -
     <a itemprop="url" href="spotify:search:artist:Jesu+album:Everyday+I+Get+Closer+To+The+Light">
-      <span itemprop="name">Everyday I Get Closer To The Light</span>
-    </a>
+      <span itemprop="name">Everyday I Get Closer To The Light</span></a>
   </li>
   <li itemscope itemtype="http://schema.org/MusicAlbum">
     <span itemprop="byArtist" itemscope itemtype="http://schema.org/MusicGroup">
       <a itemprop="url" href="spotify:search:artist:Deafheaven">
-        <span itemprop="name">Deafheaven</span>
-      </a>
+        <span itemprop="name">Deafheaven</span> aka <span itemprop="name">Deaf Heaven</span></a>
     </span>
     -
     <a itemprop="url" href="spotify:search:artist:Deafheaven+album:Sunbather">
-      <span itemprop="name">Sunbather</span>
-    </a>
+      <span itemprop="name">Sunbather</span></a>
   </li>
   <li itemscope itemtype="http://schema.org/MusicAlbum">
     <span itemprop="byArtist" itemscope itemtype="http://schema.org/MusicGroup"
         itemref="tomahawk-members tomahawk-albums">
       <a itemprop="url" href="spotify:search:artist:Tomahawk">
-        <span itemprop="name">Tomahawk</span>
-      </a>
+        <span itemprop="name">Tomahawk</span></a>
     </span>
     -
     <a itemprop="url" href="spotify:search:artist:Tomahawk+album:Oddfellows">
-      <span itemprop="name">Oddfellows</span>
-    </a>
+      <span itemprop="name">Oddfellows</span></a>
   </li>
 </ol>
 
@@ -60,3 +62,12 @@
   <li itemprop="album" itemscope itemtype="http://schema.org/MusicAlbum"><span itemprop="name">Album Two</span></li>
   <li itemprop="album" itemscope itemtype="http://schema.org/MusicAlbum"><span itemprop="name">Album Three</span></li>
 </ul>
+
+<h2>property() / value() / values()</h2>
+<table id="properties"></table>
+
+<h2>microdata()</h2>
+<pre id="microdata"></pre>
+
+<h2>microdata(true)</h2>
+<pre id="microdata-collapsed"></pre>

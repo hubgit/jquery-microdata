@@ -1,8 +1,8 @@
 # jQuery Microdata
 
-Extract and manipulate objects stored in [HTML Microdata](http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html), using a simple interface.
+Extract and manipulate objects stored in [HTML Microdata](http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html).
 
-[Demonstration](http://git.macropus.org/jquery-microdata/)
+[Demonstration](http://git.macropus.org/jquery-microdata/demo/)
 
 ### Get all items of a certain type
 
@@ -10,36 +10,52 @@ $(node).items(itemtype)
 
     $('#albumlist').items('http://schema.org/MusicAlbum')
 
-### Get a property
+### Get the property nodes of an item
 
-$(node).microdata(property) => a literal value or a jQuery object
+$(node).property(property) => a set of jQuery nodes
 
-    $(node).microdata('name') => string
+    $(node).property('name') => [ node, node ]
 
-    $(node).microdata('byArtist') => jQuery object
+    $(node).property('byArtist').eq(0).property('album') => [ node, node ]
 
-    $(node).microdata('byArtist').microdata('name') => string
+### Get the value of a property
+
+$(node).value() => the itemValue of the node(s)
+
+    $(node).property('name').value() => string
+
+    $(node).property('byArtist').eq(0).property('name').value() => string
+
+### Get the values of a property as an array
+
+$(node).values() => the itemValue of the node(s)
+
+    $(node).property('name').values() => [ string, string ]
 
 ### Set a property
 
-$(node).microdata(property, value)
+$(node).property(property).value(value)
 
-	$(node).microdata('name', 'Yellow Submarine')
+    $(node).property('name').value('Yellow Submarine')
 
-	$(node).microdata('byArtist')
-	       .microdata('name', 'The Beatles')
-	       .microdata('url', 'https://en.wikipedia.org/wiki/The_Beatles')
+### Set one of multiple properties with the same name
 
-### Get a property as an array
+$(node).property(property).eq(index).value(value)
 
-$(node).microdata(property, true) => an array of literal values or jQuery objects
+    $(node).property('name').eq(1).value('Yellow Submarine')
 
-    $(node).microdata('name', true) => [ string, string ]
+### Set multiple properties
 
-    $(node).microdata('byArtist').microdata('album', true) => [ jQuery object, jQuery object ]
+$(node).value({ key: value })
+
+    $(node).property('byArtist').value({
+        name: 'The Beatles',
+        url: 'https://en.wikipedia.org/wiki/The_Beatles'
+    });
 
 ### Get all properties
 
 $(node).microdata()
 
     $('#albumlist').items('http://schema.org/MusicAlbum').microdata()
+
