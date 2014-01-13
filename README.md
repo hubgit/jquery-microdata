@@ -14,7 +14,7 @@ $(node).items(itemtype)
 
 $(node).property(property) => a set of jQuery nodes
 
-    $(node).property('name') => [ node, node ]
+    $(node).property('name') => [ node ]
 
     $(node).property('byArtist').eq(0).property('album') => [ node, node ]
 
@@ -53,7 +53,7 @@ $(node).value({ key: value })
         url: 'https://en.wikipedia.org/wiki/The_Beatles'
     });
 
-### Get all properties of
+### Get all properties of an item
 
 $(node).values()
 
