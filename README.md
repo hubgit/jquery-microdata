@@ -12,7 +12,7 @@ $(node).items(itemtype)
 
 ### Get the property nodes of an item
 
-$(node).property(property) => a set of jQuery nodes
+item.property(property) => a set of jQuery nodes
 
     $(node).property('name') => [ node ]
 
@@ -20,7 +20,7 @@ $(node).property(property) => a set of jQuery nodes
 
 ### Get the value of a property
 
-$(node).value() => the itemValue of the node(s)
+property.value() => the itemValue of the node(s)
 
     $(node).property('name').value() => string
 
@@ -28,34 +28,34 @@ $(node).value() => the itemValue of the node(s)
 
 ### Get the values of a property as an array
 
-$(node).values() => array of the itemValues of the nodes
+property.values() => array of the itemValues of the nodes
 
     $(node).property('name').values() => [ string, string ]
 
 ### Set a property
 
-$(node).property(property).value(value)
+item.property(property).value(value)
 
     $(node).property('name').value('Yellow Submarine')
 
 ### Set one of multiple properties with the same name
 
-$(node).property(property).eq(index).value(value)
+item.property(property).eq(index).value(value)
 
     $(node).property('name').eq(1).value('Yellow Submarine')
 
-### Set multiple properties
+### Set multiple properties of an item
 
-$(node).value({ key: value })
+item.microdata({ key: value })
 
-    $(node).property('byArtist').value({
+    $(node).property('byArtist').microdata({
         name: 'The Beatles',
         url: 'https://en.wikipedia.org/wiki/The_Beatles'
     });
 
 ### Get all properties of an item
 
-$(node).values()
+item.microdata()
 
-    $('#albumlist').items('http://schema.org/MusicAlbum').values()
+    $('#albumlist').items('http://schema.org/MusicAlbum').microdata()
 

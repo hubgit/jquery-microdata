@@ -25,33 +25,6 @@
 
 	// get/set the value of matched elements
 	$.fn.value = function(value) {
-		// convenience method for getting/setting single property values of an item
-		if (this.is('[itemscope]')) {
-			switch (typeof value) {
-				// get/set a single property
-				case 'string':
-					if (arguments.length === 1) {
-						// get a single property
-						return this.property(value).value();
-					}
-
-					// set a single property
-					this.property(value).value(arguments[1]);
-
-					return this;
-
-				// set the value of multiple properties
-				case 'object':
-					var nodes = this;
-
-					$.each(value, function(name, value) {
-						nodes.property(name).value(value);
-					});
-
-					return this;
-			}
-		}
-
 		// get value
 		if (typeof value === 'undefined') {
 			return itemValue.call(this);
@@ -68,6 +41,40 @@
 
 			return node.is('[itemscope]') ? microdata.call(node, expanded) : itemValue.call(node);
 		}).get();
+	};
+
+	// convenience function for manipulating properties of an item
+	$.fn.microdata = function(value) {
+		switch (typeof value) {
+			// get all values of an item
+			case 'undefined':
+			case 'boolean':
+				return this.map(function() {
+					return microdata.call($(this), value);
+				}).get();
+
+			// get/set a single property
+			case 'string':
+				if (arguments.length === 1) {
+					// get a single property
+					return this.property(value).value();
+				}
+
+				// set a single property
+				this.property(value).value(arguments[1]);
+
+				return this;
+
+			// set the value of multiple properties
+			case 'object':
+				var nodes = this;
+
+				$.each(value, function(name, value) {
+					nodes.property(name).value(value);
+				});
+
+				return this;
+		}
 	};
 
 	// all property nodes, including those in referenced nodes
@@ -156,7 +163,7 @@
 			type: expanded ? attrs.call(this, 'itemType').get() : attrs.call(this, 'itemType').get(0)
 		};
 
-		propertyNodes.apply(this).map(function() {
+		propertyNodes.call(this).map(function() {
 			var node = $(this);
 			var property = node.value();
 

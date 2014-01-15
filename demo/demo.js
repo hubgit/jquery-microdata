@@ -4,9 +4,9 @@ $(function() {
 	var albums = $('#albumlist').items('http://schema.org/MusicAlbum');
 	var artists = albums.eq(0).property('byArtist');
 
-	artists.eq(0).value('name', 'Jesu');
+	artists.eq(0).microdata('name', 'Jesu');
 
-	artists.eq(1).value({
+	artists.eq(1).microdata({
 		name: 'Jesu Two',
 		url: 'https://en.wikipedia.org/wiki/Jesu'
 	});
@@ -30,8 +30,8 @@ $(function() {
 
 		var cell = $('<td/>').appendTo(row);
 		$('<a/>', {
-			href: album.value('url'),
-			text: album.value('name')
+			href: album.microdata('url'),
+			text: album.microdata('name')
 		}).appendTo(cell);
 
 		var cell = $('<td/>').appendTo(row);
@@ -41,25 +41,25 @@ $(function() {
 			var artist = $(this);
 
 			$('<a/>', {
-				href: artist.value('url'),
+				href: artist.microdata('url'),
 				text: artist.property('name').values().join(' / ')
 			}).appendTo(cell).wrap('<div/>');
 
 			// group's members
-			var members = artist.property('musicGroupMember').property('name');
+			var memberNames = artist.property('musicGroupMember').property('name').values();
 
-			if (members.length) {
+			if (memberNames.length) {
 				$('<div/>', {
-					text: 'Members: ' + members.values().join(', ')
+					text: 'Members: ' + memberNames.join(', ')
 				}).appendTo(cell);
 			}
 
 			// group's albums
-			var albums = artist.property('album').property('name');
+			var albumNames = artist.property('album').property('name').values();
 
-			if (albums.length) {
+			if (albumNames.length) {
 				$('<div/>', {
-					text: 'Albums: ' + albums.values().join(', ')
+					text: 'Albums: ' + albumNames.join(', ')
 				}).appendTo(cell);
 			}
 		});
@@ -72,7 +72,7 @@ $(function() {
 	var albums = $('#albumlist').items('http://schema.org/MusicAlbum');
 
 	var code = $('<code/>', {
-		text: JSON.stringify(albums.values(false), null, 2)
+		text: JSON.stringify(albums.microdata(false), null, 2)
 	});
 
 	$('#microdata').append(code);
@@ -84,7 +84,7 @@ $(function() {
 	var albums = $('#albumlist').items('http://schema.org/MusicAlbum');
 
 	var code = $('<code/>', {
-		text: JSON.stringify(albums.values(true), null, 2)
+		text: JSON.stringify(albums.microdata(true), null, 2)
 	});
 
 	$('#microdata-expanded').append(code);
