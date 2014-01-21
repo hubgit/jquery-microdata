@@ -12,10 +12,6 @@
 	// get all items of a certain type
 	$.fn.items = function(itemtype) {
 		return this.find('[itemscope]').filter(function() {
-			if (itemtype === '*') {
-				return true;
-			}
-			
 			return attrs.call(this, 'itemType').get().indexOf(itemtype) !== -1;
 		});
 	};
