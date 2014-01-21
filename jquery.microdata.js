@@ -1,25 +1,28 @@
 /*
- * jQuery Microdata v1.3
+ * jQuery Microdata v1.4
  * https://github.com/hubgit/jquery-microdata
  *
  * Copyright 2014 Alf Eaton
  * Released under the MIT license
  * http://git.macropus.org/mit-license/
  *
- * Date: 2014-01-13
+ * Date: 2014-01-21
  */
  (function($) {
+ 	// allow override of the root container, for testing
+ 	$.microdataRoot = document;
+
 	// get all items of a certain type
 	$.fn.items = function(itemtype) {
 		return this.find('[itemscope]').filter(function() {
-			return attrs.call(this, 'itemType').get().indexOf(itemtype) !== -1;
+			return attrs.call(this, 'itemtype').get().indexOf(itemtype) !== -1;
 		});
 	};
 
 	// all nodes with a certain property name
 	$.fn.property = function(name) {
 		return propertyNodes.apply(this).filter(function(item) {
-			return attrs.call(this, 'itemProp').get().indexOf(name) !== -1;
+			return attrs.call(this, 'itemprop').get().indexOf(name) !== -1;
 		});
 	};
 
@@ -79,8 +82,8 @@
 
 	// all property nodes, including those in referenced nodes
 	var propertyNodes = function() {
-		var refs = attrs.call(this, 'itemRef').map(function() {
-			return document.getElementById(this);
+		var refs = attrs.call(this, 'itemref').map(function(i, id) {
+			return $.microdataRoot.find('#' + id).get(0);
 		});
 
 		var nodes = $.merge($(refs), this);
@@ -92,6 +95,8 @@
 	var attrs = function(attribute) {
 		return $(this).map(function() {
 			return (this.getAttribute(attribute) || '').split(/\s+/);
+		}).filter(function() {
+			return this.length;
 		});
 	};
 
@@ -160,7 +165,7 @@
 
 		// the object always includes an itemtype
 		var data = {
-			type: expanded ? attrs.call(this, 'itemType').get() : attrs.call(this, 'itemType').get(0)
+			type: expanded ? attrs.call(this, 'itemtype').get() : attrs.call(this, 'itemtype').get(0)
 		};
 
 		propertyNodes.call(this).map(function() {
@@ -171,7 +176,7 @@
 				property = microdata.call(property, expanded);
 			}
 
-			attrs.call(this, 'itemProp').each(function(index, name) {
+			attrs.call(this, 'itemprop').each(function(index, name) {
 				if (expanded) {
 					if (typeof data[name] == 'undefined') {
 						data[name] = [];
