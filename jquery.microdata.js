@@ -10,7 +10,7 @@
  */
  (function($) {
  	// allow override of the root container, for testing
- 	$.microdataRoot = document;
+ 	$.microdataRoot = $(document);
 
 	// get all items of a certain type
 	$.fn.items = function(itemtype) {
