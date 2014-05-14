@@ -1,4 +1,5 @@
-/*
+/* globals jQuery:false
+ *
  * jQuery Microdata v1.4
  * https://github.com/hubgit/jquery-microdata
  *
@@ -9,6 +10,8 @@
  * Date: 2014-01-21
  */
  (function($) {
+ 	'use strict';
+
  	// allow override of the root container, for testing
  	$.microdataRoot = $(document);
 
@@ -21,7 +24,7 @@
 
 	// all nodes with a certain property name
 	$.fn.property = function(name) {
-		return propertyNodes.apply(this).filter(function(item) {
+		return propertyNodes.apply(this).filter(function() {
 			return attrs.call(this, 'itemprop').get().indexOf(name) !== -1;
 		});
 	};
@@ -102,7 +105,7 @@
 
 	// get or set the value of a node
 	var itemValue = function(value) {
-		var getting = value == null;
+		var getting = value === null;
 
 		if (this.is('[itemscope]')) {
 			if (!getting) {
@@ -161,7 +164,7 @@
 			return this.map(function() {
 				return microdata.call($(this), expanded);
 			}).get();
-		};
+		}
 
 		// the object always includes an itemtype
 		var data = {
