@@ -105,7 +105,7 @@
 
 	// get or set the value of a node
 	var itemValue = function(value) {
-		var getting = value === null;
+		var getting = value == null;
 
 		if (this.is('[itemscope]')) {
 			if (!getting) {
