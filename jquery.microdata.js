@@ -12,13 +12,10 @@
  (function($) {
  	'use strict';
 
- 	// allow override of the root container, for testing
- 	$.microdataRoot = $(document);
-
 	// get all items of a certain type
 	$.fn.items = function(itemtype) {
-		return this.find('[itemscope]').filter(function() {
-			return attrs.call(this, 'itemtype').get().indexOf(itemtype) !== -1;
+		return this.find('[itemscope]:not([itemprop])').filter(function() {
+			return !itemtype || attrs.call(this, 'itemtype').get().indexOf(itemtype) !== -1;
 		});
 	};
 
@@ -85,11 +82,13 @@
 
 	// all property nodes, including those in referenced nodes
 	var propertyNodes = function() {
-		var refs = attrs.call(this, 'itemref').map(function(i, id) {
-			return $.microdataRoot.find('#' + id).get(0);
+		var node = this;
+		
+		var refs = attrs.call(node, 'itemref').map(function(i, id) {
+			return node.ownerDocument.getElementById(id);
 		});
 
-		var nodes = $.merge($(refs), this);
+		var nodes = $.merge($(refs), node);
 
 		return nodes.find('[itemprop]').not(nodes.find('[itemscope] [itemprop]'));
 	};
