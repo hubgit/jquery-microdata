@@ -82,13 +82,20 @@
 
 	// all property nodes, including those in referenced nodes
 	var propertyNodes = function() {
-		var node = this;
+		var owner = this.ownerDocument;
 		
-		var refs = attrs.call(node, 'itemref').map(function(i, id) {
-			return node.ownerDocument.getElementById(id);
+		if (!owner) {
+			owner = this;
+			while (owner.parentNode) {
+				owner = owner.parentNode;
+			}
+		}
+		
+		var refs = attrs.call(this, 'itemref').map(function(i, id) {
+			return owner.getElementById(id);
 		});
 
-		var nodes = $.merge($(refs), node);
+		var nodes = $.merge($(refs), this);
 
 		return nodes.find('[itemprop]').not(nodes.find('[itemscope] [itemprop]'));
 	};
