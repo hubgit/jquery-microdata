@@ -80,19 +80,30 @@
 		}
 	};
 
+	var ownerElement = function(node) {
+		if (node.ownerDocument) {
+			return $(node.ownerDocument);
+		}
+
+		var owner = node;
+
+		while (owner.parentNode) {
+			owner = owner.parentNode;
+		}
+
+		return $(owner);
+	};
+
 	// all property nodes, including those in referenced nodes
 	var propertyNodes = function() {
-		var owner = this.ownerDocument;
-		
-		if (!owner) {
-			owner = this;
-			while (owner.parentNode) {
-				owner = owner.parentNode;
-			}
+		if (!this.length) {
+			return $([]);
 		}
-		
+
+		var owner = ownerElement(this);
+
 		var refs = attrs.call(this, 'itemref').map(function(i, id) {
-			return owner.querySelector('#' + id);
+			return owner.find('#' + id);
 		});
 
 		var nodes = $.merge($(refs), this);
