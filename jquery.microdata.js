@@ -92,7 +92,7 @@
 		}
 		
 		var refs = attrs.call(this, 'itemref').map(function(i, id) {
-			return owner.getElementById(id);
+			return owner.querySelector('#' + id);
 		});
 
 		var nodes = $.merge($(refs), this);
