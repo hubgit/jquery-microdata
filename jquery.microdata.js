@@ -81,13 +81,9 @@
 	};
 
 	var ownerElement = function(node) {
-		if (node.ownerDocument) {
-			return $(node.ownerDocument);
-		}
-
 		var owner = node;
 
-		while (owner.parentNode) {
+		while (owner.parentNode && owner.parentNode.nodeType === 1) {
 			owner = owner.parentNode;
 		}
 
@@ -100,10 +96,10 @@
 			return $([]);
 		}
 
-		var owner = ownerElement(this);
+		var owner = ownerElement(this.get(0));
 
 		var refs = attrs.call(this, 'itemref').map(function(i, id) {
-			return owner.find('#' + id);
+			return owner.find('#' + id).get(0);
 		});
 
 		var nodes = $.merge($(refs), this);
